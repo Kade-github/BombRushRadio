@@ -96,6 +96,12 @@
         <Reference Include="UnityEngine.CoreModule">
           <HintPath>..\..\..\steamInstall\steamapps\common\BombRushCyberfunk\Bomb Rush Cyberfunk_Data\Managed\UnityEngine.CoreModule.dll</HintPath>
         </Reference>
+        <Reference Include="UnityEngine.InputLegacyModule">
+          <HintPath>..\..\..\steamInstall\steamapps\common\BombRushCyberfunk\Bomb Rush Cyberfunk_Data\Managed\UnityEngine.InputLegacyModule.dll</HintPath>
+        </Reference>
+        <Reference Include="UnityEngine.InputModule">
+          <HintPath>..\..\..\steamInstall\steamapps\common\BombRushCyberfunk\Bomb Rush Cyberfunk_Data\Managed\UnityEngine.InputModule.dll</HintPath>
+        </Reference>
         <Reference Include="UnityEngine.UnityWebRequestAssetBundleModule">
           <HintPath>..\..\..\steamInstall\steamapps\common\BombRushCyberfunk\Bomb Rush Cyberfunk_Data\Managed\UnityEngine.UnityWebRequestAssetBundleModule.dll</HintPath>
         </Reference>
@@ -113,6 +119,7 @@
         <Compile Include="BaseModule-Patches.cs" />
         <Compile Include="BombRushRadio.cs" />
         <Compile Include="MusicPlayer-Patches.cs" />
+        <Compile Include="MusicPlayerBuffer-Patches.cs" />
         <Compile Include="Properties\AssemblyInfo.cs" />
     </ItemGroup>
     <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />

@@ -1,10 +1,12 @@
-﻿using System.Collections;
+﻿using System;
+using System.Collections;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 using BepInEx;
+using BepInEx.Configuration;
 using HarmonyLib;
 using Reptile;
 using UnityEngine;
@@ -13,22 +15,25 @@ using UnityEngine.Networking;
 
 namespace BombRushRadio
 {
-    [BepInPlugin("kade.bombrushradio", "Bomb Rush Radio!", "1.0.0.0")]
+    [BepInPlugin("kade.bombrushradio", "Bomb Rush Radio!", "1.1.0.0")]
     [BepInProcess("Bomb Rush Cyberfunk.exe")]
     public class BombRushRadio : BaseUnityPlugin
     {
-        public static List<MusicTrack> audios = new List<MusicTrack>();
+        public static BombRushRadio Instance = null;
+        public static List<MusicTrack> audios = new();
         public int shouldBeDone = 0;
         public int done = 0;
 
-        public static bool inMainMenu = true;
-        public IEnumerator LoadAudioFile(string filePath)
+        public static bool inMainMenu = false;
+        public static bool loading = false;
+        public static bool addOnComplete = false;
+        public IEnumerator LoadAudioFile(string filePath, AudioType type)
         {
             string clean = filePath.Split('\\').Last();
             // Escape special characters so we don't get an HTML error when we send the request
             filePath = UnityWebRequest.EscapeURL(filePath);
  
-            using (UnityWebRequest www = UnityWebRequestMultimedia.GetAudioClip("file:///"+filePath, AudioType.MPEG))
+            using (UnityWebRequest www = UnityWebRequestMultimedia.GetAudioClip("file:///"+filePath, type))
             {
                 yield return www.SendWebRequest();
                 if (www.result == UnityWebRequest.Result.ConnectionError)
@@ -38,6 +43,7 @@ namespace BombRushRadio
                 else
                 {
                     AudioClip myClip = DownloadHandlerAudioClip.GetContent(www);
+                    myClip.name = clean;
                     string[] spl = clean.Substring(0,clean.Length - 4).Split('-');
                     string songName = spl[1];
                     string songArtist = spl[0];
@@ -47,41 +53,82 @@ namespace BombRushRadio
                     t.AudioClip = myClip;
                     t.Artist = songArtist;
                     t.Title = songName;
-                    t.isRepeatable = false;
+                    t.isRepeatable = true;
                     audios.Add(t);
                     
                     Logger.LogInfo("[BRR] Loaded " + songName + " by " + songArtist + " (" + done + "/" + shouldBeDone + ")");
                     if (done == shouldBeDone)
+                    {
                         Logger.LogInfo("[BRR] Bomb Rush Radio has been loaded!");
+                        if (addOnComplete)
+                        {
+                            if (Core.Instance.audioManager.musicPlayer != null)
+                            {
+                                foreach(MusicTrack tr in audios)
+                                    Core.Instance.audioManager.musicPlayer.AddMusicTrack(tr);
+                            }
+
+                            addOnComplete = false;
+                        }
+                        loading = false;
+                    }
                 }
             }
         }
         
         public MusicBundle bundle;
-
-        private void ReloadSongs()
+        internal static ConfigEntry<KeyCode> reloadKey;
+        public void ReloadSongs()
         {
-            // maybe in the future let the player reload on the fly, its defn possible. im lazy.
-            foreach (MusicTrack t in audios)
+            loading = true;
+            if (audios.Count > 0)
             {
-                t.AudioClip.UnloadAudioData();
+                if (Core.Instance.audioManager.musicPlayer.IsPlaying)
+                {
+                    Core.Instance.audioManager.musicPlayer.ForcePaused();
+                    Core.Instance.audioManager.musicPlayer.Clear();
+                    addOnComplete = true;
+                }
+
+                foreach (MusicTrack t in audios)
+                {
+                    t.AudioClip.UnloadAudioData();
+                }
+                audios.Clear();
+                
             }
-            audios.Clear();
+            
             Logger.LogInfo("[BRR] Loading songs...");
             shouldBeDone = 0;
             done = 0;
             foreach(string f in Directory.GetFiles(Application.streamingAssetsPath + "/Mods/BombRushRadio/Songs"))
             {
-                if (!f.EndsWith(".mp3"))
-                    continue;
+                AudioType type;
+                switch (f.Split('.').Last().ToLower())
+                {
+                    case "mp3":
+                        type = AudioType.MPEG;
+                        break;
+                    case "wav":
+                        type = AudioType.WAV;
+                        break;
+                    case "ogg":
+                        type = AudioType.OGGVORBIS;
+                        break;
+                    default:
+                        continue;
+                }
                 shouldBeDone++;
-                StartCoroutine(LoadAudioFile(f));
+                StartCoroutine(LoadAudioFile(f, type));
             }
+            
 
         }
         
+
         private void Awake()
         {
+            Instance = this;
             // setup mod dirs
             if (!Directory.Exists(Application.streamingAssetsPath + "/Mods"))
                 Directory.CreateDirectory(Application.streamingAssetsPath + "/Mods");
@@ -97,6 +144,12 @@ namespace BombRushRadio
             var harmony = new Harmony("kade.bombrushradio");
             harmony.PatchAll();
             Logger.LogInfo("[BRR] Patched...");
+
+            Core.OnUpdate += () =>
+            {
+                if (Input.GetKeyDown(KeyCode.F1) && !inMainMenu && !loading) // reload songs
+                    ReloadSongs();
+            };
         }
     }
 }

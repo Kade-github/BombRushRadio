@@ -11,16 +11,35 @@ public class MusicPlayer_Patches
     {
         if (BombRushRadio.inMainMenu)
             return; // don't do it in the mainmenu
-        Debug.Log("[BRR] Adding custom music to the game...");
+
         foreach (MusicTrack track in BombRushRadio.audios)
         {
+            if (__instance.musicTrackQueue.currentMusicTracks.Find(m =>
+                    m.Title == track.Title && m.Artist == track.Artist))
+                continue;
+            
             __instance.musicTrackQueue.currentMusicTracks.Add(track);
         }
+        
+        __instance.musicTrackQueue.BufferTracksInQueue();
 
         Debug.Log("[BRR] Line up: ");
+        int i = 0;
         foreach (MusicTrack track in __instance.musicTrackQueue.currentMusicTracks)
         {
-            Debug.Log("[BRR] " + track.Title + " by " + track.Artist);
+            i++;
+            Debug.Log("[BRR] #" + i + " " + track.Title + " by " + track.Artist);
         }
+    }
+}
+
+[HarmonyPatch(typeof(MusicTrackQueue), nameof(MusicTrackQueue.HasMusicTrack))]
+public class MusicTrackQueue_Patches
+{
+    static bool Prefix(MusicTrack musicTrack) // ignore unlocking for custom stuff
+    {
+        if (BombRushRadio.audios.Find(m => musicTrack.Artist == m.Artist && musicTrack.Title == m.Title))
+            return false;
+        return true;
     }
 }
