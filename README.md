@@ -15,7 +15,7 @@ To install:
 
 ### Standalone
 
-You must have BepInEx already installed,
+You must have BepInEx already installed (make sure its 6.0!, [here](https://github.com/BepInEx/BepInEx/releases/tag/v6.0.0-pre.1)),
 
 To install:
 
