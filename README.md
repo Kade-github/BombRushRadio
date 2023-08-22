@@ -15,7 +15,9 @@ To install:
 
 ### Standalone
 
-You must have BepInEx already installed (make sure its 6.0!, [here](https://github.com/BepInEx/BepInEx/releases/tag/v6.0.0-pre.1)),![image](https://github.com/Kade-github/BombRushRadio/assets/26305836/ef84a857-0eb5-4ea9-9a55-79db9f132486)
+You must have BepInEx already installed (make sure its 6.0!, [here](https://github.com/BepInEx/BepInEx/releases/tag/v6.0.0-pre.1)),
+
+![image](https://github.com/Kade-github/BombRushRadio/assets/26305836/ef84a857-0eb5-4ea9-9a55-79db9f132486)
 
 (I used this exact version, 6.0-pre1)
 
