@@ -30,6 +30,10 @@ It should look like this at the very end
 
 ![image](https://github.com/Kade-github/BombRushRadio/assets/26305836/46ca5d9f-d041-44ee-9ffb-a969f357fa00)
 
+# STEAM DECK USERS
+
+For it to work, you must use this launch property in steam: `WINEDLLOVERRIDES="winhttp=n,b" %command%`
+
 ## How to use
 
 Launch the game once, then navigate to your games root directory, go into **"Bomb Rush Cyberfunk_Data/StreamingAssets/Mods/BombRushRadio/Songs/"** which the mod should have created, then drag .mp3's in that folder.
