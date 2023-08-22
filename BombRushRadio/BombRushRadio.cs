@@ -25,9 +25,41 @@ namespace BombRushRadio
         public int shouldBeDone = 0;
         public int done = 0;
 
+        private static List<String> loaded = new();
+        
         public static bool inMainMenu = false;
         public static bool loading = false;
         public static bool addOnComplete = false;
+
+        public void SanitizeSongs()
+        {
+            if (Core.Instance == null)
+                return;
+            if (Core.Instance.audioManager == null)
+                return;
+            if (Core.Instance.audioManager.musicPlayer != null)
+            {
+                List<MusicTrack> toRemove = new List<MusicTrack>();
+                foreach (MusicTrack tr in audios)
+                {
+                    if (loaded.FirstOrDefault(l => l == tr.Artist + "-" + tr.Title) == null)
+                    {
+                        Logger.LogInfo("[BRR] Removed " + tr.Title);
+                        mInstance.musicTrackQueue.currentMusicTracks.Remove(tr);
+                        toRemove.Add(tr);
+                    }
+                    else if (!mInstance.musicTrackQueue.currentMusicTracks.Contains(tr))
+                        Core.Instance.audioManager.musicPlayer.AddMusicTrack(tr);
+                                    
+                }
+
+                foreach (MusicTrack tr in toRemove)
+                {
+                    audios.Remove(tr);
+                    tr.AudioClip.UnloadAudioData();
+                }
+            }
+        }
         public IEnumerator LoadAudioFile(string filePath, AudioType type)
         {
             string clean = filePath.Split('\\').Last();
@@ -58,19 +90,10 @@ namespace BombRushRadio
                     audios.Add(t);
                     
                     Logger.LogInfo("[BRR] Loaded " + songName + " by " + songArtist + " (" + done + "/" + shouldBeDone + ")");
+                    loaded.Add(songArtist + "-" + songName);
                     if (done == shouldBeDone)
                     {
                         Logger.LogInfo("[BRR] Bomb Rush Radio has been loaded!");
-                        if (addOnComplete)
-                        {
-                            if (Core.Instance.audioManager.musicPlayer != null)
-                            {
-                                foreach(MusicTrack tr in audios)
-                                    Core.Instance.audioManager.musicPlayer.AddMusicTrack(tr);
-                            }
-
-                            addOnComplete = false;
-                        }
                         loading = false;
                     }
                 }
@@ -82,24 +105,37 @@ namespace BombRushRadio
 
         public IEnumerator LoadFile(string f)
         {
-            AudioType type = AudioType.UNKNOWN;
-            switch (f.Split('.').Last().ToLower())
+            string clean = f.Split('\\').Last();
+            string[] spl = clean.Substring(0,clean.Length - 4).Split('-');
+            string songName = spl[1];
+            string songArtist = spl[0];
+            if (audios.Find(m => m.Artist == songArtist && songName == m.Title))
             {
-                case "mp3":
-                    type = AudioType.MPEG;
-                    break;
-                case "wav":
-                    type = AudioType.WAV;
-                    break;
-                case "ogg":
-                    type = AudioType.OGGVORBIS;
-                    break;
-                default:
-                    yield return null;
-                    break;
+                loaded.Add(songArtist + "-" + songName);
+                Logger.LogInfo("[BRR] " + songName + " is already loaded, skipping.");
             }
-            shouldBeDone++;
-            StartCoroutine(LoadAudioFile(f, type));
+            else
+            {
+                AudioType type = AudioType.UNKNOWN;
+                switch (f.Split('.').Last().ToLower())
+                {
+                    case "mp3":
+                        type = AudioType.MPEG;
+                        break;
+                    case "wav":
+                        type = AudioType.WAV;
+                        break;
+                    case "ogg":
+                        type = AudioType.OGGVORBIS;
+                        break;
+                    default:
+                        yield return null;
+                        break;
+                }
+
+                shouldBeDone++;
+                StartCoroutine(LoadAudioFile(f, type));
+            }
             yield return null;
         }
 
@@ -118,39 +154,29 @@ namespace BombRushRadio
                 StartCoroutine(LoadFile(f));
             }
             
-
             yield return null;
         }
         
-        public void ReloadSongs()
+        public IEnumerator  ReloadSongs()
         {
+            loaded.Clear();
             loading = true;
             if (audios.Count > 0)
             {
                 if (Core.Instance.audioManager.musicPlayer.IsPlaying && mInstance != null)
                 {
                     Core.Instance.audioManager.musicPlayer.ForcePaused();
-                    foreach (MusicTrack tra in mInstance.musicTrackQueue.currentMusicTracks)
-                    {
-                        if (audios.Find(m => tra.Artist == m.Artist && m.Title == tra.Title))
-                            mInstance.musicTrackQueue.currentMusicTracks.Remove(tra);
-                    }
                     addOnComplete = true;
                 }
-
-                foreach (MusicTrack t in audios)
-                {
-                    t.AudioClip.UnloadAudioData();
-                }
-                audios.Clear();
-                
             }
             
             Logger.LogInfo("[BRR] Loading songs...");
             shouldBeDone = 0;
             done = 0;
 
-            StartCoroutine(SearchDirectories());
+            yield return StartCoroutine(SearchDirectories());
+            
+            SanitizeSongs();
         }
         
 
@@ -167,16 +193,18 @@ namespace BombRushRadio
             
             // load em
             
-            ReloadSongs();
+            StartCoroutine(ReloadSongs());
 
             var harmony = new Harmony("kade.bombrushradio");
             harmony.PatchAll();
             Logger.LogInfo("[BRR] Patched...");
 
+            bool sanitizePlease = false;
+            
             Core.OnUpdate += () =>
             {
-                if (Input.GetKeyDown(KeyCode.F1) && !inMainMenu && !loading) // reload songs
-                    ReloadSongs();
+                if (Input.GetKeyDown(KeyCode.F1) && !inMainMenu) // reload songs
+                    StartCoroutine(ReloadSongs());
             };
         }
     }
