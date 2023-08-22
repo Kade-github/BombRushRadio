@@ -9,9 +9,13 @@ public class MusicPlayer_Patches
 {
     static void Prefix(MusicPlayer __instance)
     {
-        if (BombRushRadio.inMainMenu)
+        if (BombRushRadio.inMainMenu || BombRushRadio.loading)
             return; // don't do it in the mainmenu
 
+        BombRushRadio.mInstance = __instance;
+
+        Debug.Log("[BRR] Amount of tracks " + __instance.musicTrackQueue.AmountOfTracks);
+        
         foreach (MusicTrack track in BombRushRadio.audios)
         {
             if (__instance.musicTrackQueue.currentMusicTracks.Find(m =>
@@ -20,8 +24,6 @@ public class MusicPlayer_Patches
             
             __instance.musicTrackQueue.currentMusicTracks.Add(track);
         }
-        
-        __instance.musicTrackQueue.BufferTracksInQueue();
 
         Debug.Log("[BRR] Line up: ");
         int i = 0;
@@ -41,5 +43,14 @@ public class MusicTrackQueue_Patches
         if (BombRushRadio.audios.Find(m => musicTrack.Artist == m.Artist && musicTrack.Title == m.Title))
             return false;
         return true;
+    }
+}
+
+[HarmonyPatch(typeof(MusicPlayer), nameof(MusicPlayer.PlayFrom))]
+public class MusicPlayer_Patches_PlayFrom
+{
+    static void Prefix(MusicPlayer __instance, int index, int playbackSamples = 0)
+    {
+        __instance.ForcePaused();
     }
 }

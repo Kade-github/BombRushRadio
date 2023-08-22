@@ -15,10 +15,11 @@ using UnityEngine.Networking;
 
 namespace BombRushRadio
 {
-    [BepInPlugin("kade.bombrushradio", "Bomb Rush Radio!", "1.1.0.0")]
+    [BepInPlugin("kade.bombrushradio", "Bomb Rush Radio!", "1.1.1.0")]
     [BepInProcess("Bomb Rush Cyberfunk.exe")]
     public class BombRushRadio : BaseUnityPlugin
     {
+        public static MusicPlayer mInstance;
         public static BombRushRadio Instance = null;
         public static List<MusicTrack> audios = new();
         public int shouldBeDone = 0;
@@ -53,7 +54,7 @@ namespace BombRushRadio
                     t.AudioClip = myClip;
                     t.Artist = songArtist;
                     t.Title = songName;
-                    t.isRepeatable = true;
+                    t.isRepeatable = false;
                     audios.Add(t);
                     
                     Logger.LogInfo("[BRR] Loaded " + songName + " by " + songArtist + " (" + done + "/" + shouldBeDone + ")");
@@ -78,15 +79,62 @@ namespace BombRushRadio
         
         public MusicBundle bundle;
         internal static ConfigEntry<KeyCode> reloadKey;
+
+        public IEnumerator LoadFile(string f)
+        {
+            AudioType type = AudioType.UNKNOWN;
+            switch (f.Split('.').Last().ToLower())
+            {
+                case "mp3":
+                    type = AudioType.MPEG;
+                    break;
+                case "wav":
+                    type = AudioType.WAV;
+                    break;
+                case "ogg":
+                    type = AudioType.OGGVORBIS;
+                    break;
+                default:
+                    yield return null;
+                    break;
+            }
+            shouldBeDone++;
+            StartCoroutine(LoadAudioFile(f, type));
+            yield return null;
+        }
+
+        public IEnumerator SearchDirectories(string path = "")
+        {
+            string p = path.Length == 0 ? Application.streamingAssetsPath + "/Mods/BombRushRadio/Songs" : path;
+            
+            foreach (string f in Directory.GetDirectories(p))
+            {
+                Logger.LogInfo("[BRR] Searching directory " + f);
+                StartCoroutine(SearchDirectories(f));
+            }
+            
+            foreach(string f in Directory.GetFiles(p))
+            {
+                StartCoroutine(LoadFile(f));
+            }
+            
+
+            yield return null;
+        }
+        
         public void ReloadSongs()
         {
             loading = true;
             if (audios.Count > 0)
             {
-                if (Core.Instance.audioManager.musicPlayer.IsPlaying)
+                if (Core.Instance.audioManager.musicPlayer.IsPlaying && mInstance != null)
                 {
                     Core.Instance.audioManager.musicPlayer.ForcePaused();
-                    Core.Instance.audioManager.musicPlayer.Clear();
+                    foreach (MusicTrack tra in mInstance.musicTrackQueue.currentMusicTracks)
+                    {
+                        if (audios.Find(m => tra.Artist == m.Artist && m.Title == tra.Title))
+                            mInstance.musicTrackQueue.currentMusicTracks.Remove(tra);
+                    }
                     addOnComplete = true;
                 }
 
@@ -101,28 +149,8 @@ namespace BombRushRadio
             Logger.LogInfo("[BRR] Loading songs...");
             shouldBeDone = 0;
             done = 0;
-            foreach(string f in Directory.GetFiles(Application.streamingAssetsPath + "/Mods/BombRushRadio/Songs"))
-            {
-                AudioType type;
-                switch (f.Split('.').Last().ToLower())
-                {
-                    case "mp3":
-                        type = AudioType.MPEG;
-                        break;
-                    case "wav":
-                        type = AudioType.WAV;
-                        break;
-                    case "ogg":
-                        type = AudioType.OGGVORBIS;
-                        break;
-                    default:
-                        continue;
-                }
-                shouldBeDone++;
-                StartCoroutine(LoadAudioFile(f, type));
-            }
-            
 
+            StartCoroutine(SearchDirectories());
         }
         
 
