@@ -44,6 +44,15 @@ It should look like this
 
 ![image](https://github.com/Kade-github/BombRushRadio/assets/26305836/c30022e8-703f-4918-9a46-b70a65019be6)
 
+(You can also use folders, like this)
+![image](https://github.com/Kade-github/BombRushRadio/assets/26305836/dc977b6b-2e49-461f-94a2-e1a2955041b8)
+![image](https://github.com/Kade-github/BombRushRadio/assets/26305836/108a13ba-ce65-4b65-81cb-fb03a7b003ef)
+
+
+## Reloading
+
+Want to reload songs on the fly? Make some changes in the song folder and press **F1** in game, it'll load any deletions/additions you make! (Not changes to files though)
+
 ## Building
 
 Create a Publicized Assembly of the game, through anything (I used BepInEx's one, oh and I can't provide this because its a paid game)
