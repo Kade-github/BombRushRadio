@@ -21,6 +21,11 @@ To install:
 
 **Put the .dll in your BepInEx/Plugins/ folder**
 
+It should look like this at the very end
+
+![image](https://github.com/Kade-github/BombRushRadio/assets/26305836/46ca5d9f-d041-44ee-9ffb-a969f357fa00)
+
+
 ## How to use
 
 Launch the game once, then navigate to your games root directory, go into "Bomb Rush Cyberfunk_Data/StreamingAssets/Mods/BombRushRadio/Songs/" which the mod should have created, then drag .mp3's in that folder.
