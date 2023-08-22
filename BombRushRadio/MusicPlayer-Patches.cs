@@ -1,4 +1,5 @@
-﻿using HarmonyLib;
+﻿using System;
+using HarmonyLib;
 using Reptile;
 using UnityEngine;
 
@@ -15,6 +16,8 @@ public class MusicPlayer_Patches
         BombRushRadio.mInstance = __instance;
 
         Debug.Log("[BRR] Amount of tracks " + __instance.musicTrackQueue.AmountOfTracks);
+
+        bool addedAnything = false;
         
         foreach (MusicTrack track in BombRushRadio.audios)
         {
@@ -23,6 +26,7 @@ public class MusicPlayer_Patches
                 continue;
             
             __instance.musicTrackQueue.currentMusicTracks.Add(track);
+            addedAnything = true;
         }
 
         Debug.Log("[BRR] Line up: ");

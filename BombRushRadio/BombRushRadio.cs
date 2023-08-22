@@ -58,6 +58,8 @@ namespace BombRushRadio
                     audios.Remove(tr);
                     tr.AudioClip.UnloadAudioData();
                 }
+                
+                mInstance.musicTrackQueue.currentMusicTracks.Sort((m,m2) => String.Compare(m.Title, m2.Title, StringComparison.Ordinal));
             }
         }
         public IEnumerator LoadAudioFile(string filePath, AudioType type)
@@ -94,6 +96,7 @@ namespace BombRushRadio
                     if (done == shouldBeDone)
                     {
                         Logger.LogInfo("[BRR] Bomb Rush Radio has been loaded!");
+                        audios.Sort((m,m2) => String.Compare(m.Title, m2.Title, StringComparison.Ordinal));
                         loading = false;
                     }
                 }
