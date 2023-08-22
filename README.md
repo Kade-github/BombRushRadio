@@ -27,7 +27,7 @@ It should look like this at the very end
 
 ## How to use
 
-Launch the game once, then navigate to your games root directory, go into "**Bomb Rush Cyberfunk_Data/StreamingAssets/Mods/BombRushRadio/Songs/**E" which the mod should have created, then drag .mp3's in that folder.
+Launch the game once, then navigate to your games root directory, go into **"Bomb Rush Cyberfunk_Data/StreamingAssets/Mods/BombRushRadio/Songs/"** which the mod should have created, then drag .mp3's in that folder.
 
 The format is pretty simple, "**Artist-SongTitle**
 
