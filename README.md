@@ -48,6 +48,7 @@ Launch the game once, then navigate to your games root directory, go into **"Bom
 - S3M
 - WAV
 - XM
+- FLAC
 
 The format is pretty simple, "**Artist-SongTitle**"
 
