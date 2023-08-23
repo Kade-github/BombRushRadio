@@ -122,14 +122,31 @@ namespace BombRushRadio
                 AudioType type = AudioType.UNKNOWN;
                 switch (f.Split('.').Last().ToLower())
                 {
+                    case "aif":
+                    case "aiff":
+                        type = AudioType.AIFF;
+                        break;
+                    case "it":
+                        type = AudioType.IT;
+                        break;
+                    case "mod":
+                        type = AudioType.MOD;
+                        break;
+                    case "mp2":
                     case "mp3":
                         type = AudioType.MPEG;
+                        break;
+                    case "ogg":
+                        type = AudioType.OGGVORBIS;
+                        break;
+                    case "s3m":
+                        type = AudioType.S3M;
                         break;
                     case "wav":
                         type = AudioType.WAV;
                         break;
-                    case "ogg":
-                        type = AudioType.OGGVORBIS;
+                    case "xm":
+                        type = AudioType.XM;
                         break;
                     default:
                         yield return null;
