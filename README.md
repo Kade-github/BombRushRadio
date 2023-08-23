@@ -8,6 +8,8 @@ A Bomb Rush Cyberfunk mod that lets you add custom music into the game!
 
 ## Installation
 
+### [THUNDERSTORE (CAN BE USED ON R2MODMAN)](https://thunderstore.io/c/bomb-rush-cyberfunk/p/Kade/BombRushRadio/)
+
 Go to the [latest release](https://github.com/Kade-github/BombRushRadio/releases/latest), and download either:
 
 ### BepInEx Included
