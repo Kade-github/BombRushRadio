@@ -39,9 +39,15 @@ For it to work, you must use this launch property in steam: `WINEDLLOVERRIDES="w
 Launch the game once, then navigate to your games root directory, go into **"Bomb Rush Cyberfunk_Data/StreamingAssets/Mods/BombRushRadio/Songs/"** which the mod should have created, then drag your songs into that folder. Make sure it's a supported format.
 
 ### Supported Formats
+- AIF(F)
+- IT
+- MOD
+- MP2
 - MP3
-- WAV
 - OGG
+- S3M
+- WAV
+- XM
 
 The format is pretty simple, "**Artist-SongTitle**"
 
