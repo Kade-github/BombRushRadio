@@ -93,19 +93,9 @@ namespace BombRushRadio
                     
                     Logger.LogInfo("[BRR] Loaded " + songName + " by " + songArtist + " (" + done + "/" + shouldBeDone + ")");
                     loaded.Add(songArtist + "-" + songName);
-                    if (done == shouldBeDone)
-                    {
-                        Logger.LogInfo("[BRR] Bomb Rush Radio has been loaded!");
-                        audios.Sort((m,m2) => String.Compare(m.Title, m2.Title, StringComparison.Ordinal));
-                        loading = false;
-                    }
                 }
             }
         }
-        
-        public MusicBundle bundle;
-        internal static ConfigEntry<KeyCode> reloadKey;
-
         public IEnumerator LoadFile(string f)
         {
             string clean = f.Split('\\').Last();
@@ -148,6 +138,8 @@ namespace BombRushRadio
                         break;
                     case "xm":
                         type = AudioType.XM;
+                        break;
+                    case "flac":
                         break;
                     default:
                         yield return null;
@@ -196,6 +188,10 @@ namespace BombRushRadio
             done = 0;
 
             yield return StartCoroutine(SearchDirectories());
+            
+            Logger.LogInfo("[BRR] Bomb Rush Radio has been loaded!");
+            audios.Sort((m,m2) => String.Compare(m.Title, m2.Title, StringComparison.Ordinal));
+            loading = false;
             
             SanitizeSongs();
         }
