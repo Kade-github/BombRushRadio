@@ -109,7 +109,8 @@ namespace BombRushRadio
         public IEnumerator LoadFile(string f)
         {
             string clean = f.Split('\\').Last();
-            string[] spl = clean.Substring(0,clean.Length - 4).Split('-');
+            string extension = f.Split('.').Last().ToLower();
+            string[] spl = clean.Substring(0,clean.Length - extension.Length - 1).Split('-');
             string songName = spl[1];
             string songArtist = spl[0];
             if (audios.Find(m => m.Artist == songArtist && songName == m.Title))
@@ -120,7 +121,7 @@ namespace BombRushRadio
             else
             {
                 AudioType type = AudioType.UNKNOWN;
-                switch (f.Split('.').Last().ToLower())
+                switch (extension)
                 {
                     case "aif":
                     case "aiff":
