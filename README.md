@@ -39,6 +39,22 @@ It should look like this
 
 ![image](https://github.com/Kade-github/BombRushRadio/assets/26305836/108a13ba-ce65-4b65-81cb-fb03a7b003ef)
 
+# Config
+
+```
+## Settings file was created by plugin Bomb Rush Radio! v1.3.1.0
+## Plugin GUID: kade.bombrushradio
+
+[Audio]
+
+## Caches audios to disc (Pros: Memory is lowered significantly, Any startup load time after the first start is lowered significantly, Cons: Stutters on play (depending on audio size), Caching on disc can be expensive on storage (depending on audio size/format))
+# Setting type: Boolean
+# Default value: false
+Caching = false
+
+
+```
+
 ## Installation
 
 ### [THUNDERSTORE (CAN BE USED ON R2MODMAN)](https://thunderstore.io/c/bomb-rush-cyberfunk/p/Kade/BombRushRadio/)
