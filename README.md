@@ -1,7 +1,14 @@
+<p align="center">
+  <img src="https://github.com/Kade-github/BombRushRadio/assets/26305836/0ffccadb-8004-437f-8543-5040c219fff2">
+</p>
+
+
 # BombRushRadio
 A Bomb Rush Cyberfunk mod that lets you add custom music into the game!
 
 ## Installation
+
+### [THUNDERSTORE (CAN BE USED ON R2MODMAN)](https://thunderstore.io/c/bomb-rush-cyberfunk/p/Kade/BombRushRadio/)
 
 Go to the [latest release](https://github.com/Kade-github/BombRushRadio/releases/latest), and download either:
 
@@ -15,12 +22,7 @@ To install:
 
 ### Standalone
 
-You must have BepInEx already installed (make sure its 6.0!, [here](https://github.com/BepInEx/BepInEx/releases/tag/v6.0.0-pre.1)),
-
-![image](https://github.com/Kade-github/BombRushRadio/assets/26305836/ef84a857-0eb5-4ea9-9a55-79db9f132486)
-
-(I used this exact version, 6.0-pre1)
-
+You must have BepInEx already installed (make sure its 5.4!!)
 
 To install:
 
@@ -48,6 +50,7 @@ Launch the game once, then navigate to your games root directory, go into **"Bom
 - S3M
 - WAV
 - XM
+- FLAC
 
 The format is pretty simple, "**Artist-SongTitle**"
 
