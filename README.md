@@ -6,6 +6,39 @@
 # BombRushRadio
 A Bomb Rush Cyberfunk mod that lets you add custom music into the game!
 
+## How to use
+
+Launch the game once, then navigate to your games root directory, go into **"Bomb Rush Cyberfunk_Data/StreamingAssets/Mods/BombRushRadio/Songs/"** which the mod should have created, then drag your songs into that folder. Make sure it's a supported format.
+
+### Supported Formats
+- AIF(F)
+- IT
+- MOD
+- MP2
+- MP3
+- OGG
+- S3M
+- WAV
+- XM
+- FLAC
+
+The format is pretty simple, 
+
+## if the format is not this (it will not work):
+# "**Artist-SongTitle**"
+
+
+It should look like this
+
+![image](https://github.com/Kade-github/BombRushRadio/assets/26305836/c30022e8-703f-4918-9a46-b70a65019be6)
+
+
+(You can also use folders, like this)
+
+![image](https://github.com/Kade-github/BombRushRadio/assets/26305836/dc977b6b-2e49-461f-94a2-e1a2955041b8)
+
+![image](https://github.com/Kade-github/BombRushRadio/assets/26305836/108a13ba-ce65-4b65-81cb-fb03a7b003ef)
+
 ## Installation
 
 ### [THUNDERSTORE (CAN BE USED ON R2MODMAN)](https://thunderstore.io/c/bomb-rush-cyberfunk/p/Kade/BombRushRadio/)
@@ -36,34 +69,6 @@ It should look like this at the very end
 
 For it to work, you must use this launch property in steam: `WINEDLLOVERRIDES="winhttp=n,b" %command%`
 
-## How to use
-
-Launch the game once, then navigate to your games root directory, go into **"Bomb Rush Cyberfunk_Data/StreamingAssets/Mods/BombRushRadio/Songs/"** which the mod should have created, then drag your songs into that folder. Make sure it's a supported format.
-
-### Supported Formats
-- AIF(F)
-- IT
-- MOD
-- MP2
-- MP3
-- OGG
-- S3M
-- WAV
-- XM
-- FLAC
-
-The format is pretty simple, "**Artist-SongTitle**"
-
-It should look like this
-
-![image](https://github.com/Kade-github/BombRushRadio/assets/26305836/c30022e8-703f-4918-9a46-b70a65019be6)
-
-
-(You can also use folders, like this)
-
-![image](https://github.com/Kade-github/BombRushRadio/assets/26305836/dc977b6b-2e49-461f-94a2-e1a2955041b8)
-
-![image](https://github.com/Kade-github/BombRushRadio/assets/26305836/108a13ba-ce65-4b65-81cb-fb03a7b003ef)
 
 
 ## Reloading
