@@ -11,21 +11,25 @@ namespace BombRushRadio;
 [HarmonyPatch(typeof(MusicPlayer), nameof(MusicPlayer.StartMusicPlayer))]
 public class MusicPlayer_Patches
 {
-    static void Prefix(MusicPlayer __instance)
+    static bool Prefix(MusicPlayer __instance)
     {
         if (BombRushRadio.inMainMenu || BombRushRadio.loading)
-            return; // don't do it in the mainmenu
+            return false; // don't do it in the mainmenu
 
         BombRushRadio.mInstance = __instance;
 
         foreach (MusicTrack track in BombRushRadio.audios)
         {
             if (__instance.musicTrackQueue.currentMusicTracks.Find(m =>
-                    m.Title == track.Title && m.Artist == track.Artist))
+                    m.Title == track.Title && m.Artist == track.Artist) != null)
                 continue;
             
             __instance.musicTrackQueue.currentMusicTracks.Add(track);
         }
+
+        __instance.musicTrackQueue.BufferTracksInQueue();
+        
+        return true;
     }
 }
 
@@ -40,21 +44,72 @@ public class MusicTrackQueue_Patches
     }
 }
 
-[HarmonyPatch(typeof(MusicPlayer), nameof(MusicPlayer.PlayFrom))]
-public class MusicPlayer_Patches_PlayFrom
+[HarmonyPatch(typeof(MusicTrackQueue), nameof(MusicTrackQueue.SelectNextTrack))]
+public class MusicTrackQueue_Patches_SelectNextTrack
 {
-    static void Prefix(MusicPlayer __instance, int index, int playbackSamples = 0)
+    static bool Prefix(MusicTrackQueue __instance)
     {
-        __instance.ForcePaused();
+        Debug.Log("[BRR] Finding next track. Amount: "  + __instance.AmountOfTracks);
+        return true;
+    }
+}
+
+
+[HarmonyPatch(typeof(MusicTrackQueue), nameof(MusicTrackQueue.EvaluateNextTrack))]
+public class MusicTrackQueue_Patches_EvaluateNextTrack
+{
+    static bool Prefix(MusicTrackQueue __instance, int nextTrackIndex)
+    {
+        Debug.Log("[BRR] Next Track!");
         if (BombRushRadio.CacheAudios.Value)
         {
-            MusicTrack t = __instance.musicTrackQueue.currentMusicTracks[index];
-            if (BombRushRadio.audios.Find(m => m.Title == t.Title && m.Artist == t.Artist))
+            MusicTrack t = __instance.currentMusicTracks[nextTrackIndex];
+            if (BombRushRadio.audios.Find(m => m.Title == t.Title && m.Artist == t.Artist) && t.AudioClip == null)
             {
                 string[] sp = BombRushRadio.filePaths[t.Artist + "-" + t.Title].Split(',');
                 t.AudioClip = Helpers.LoadACFromCache(sp[0], sp[1]);
-                Debug.Log("[BRR] Loaded cache for " + t.Title);
+                Debug.Log("[BRR] Loaded cache for " + t.Title + ". Length: " + t.AudioClip.length);
             }
         }
+
+        return true;
+    }
+}
+
+
+[HarmonyPatch(typeof(MusicPlayer), nameof(MusicPlayer.UpdateIsPlayingMusic))]
+public class MusicPlayer_Patches_UpdateIsPlayingMusic
+{
+    static void Prefix(MusicPlayer __instance)
+    {
+    }
+}
+
+
+[HarmonyPatch(typeof(MusicPlayer), nameof(MusicPlayer.PlayFrom))]
+public class MusicPlayer_Patches_PlayFrom
+{
+    static bool Prefix(MusicPlayer __instance, int index, int playbackSamples = 0)
+    {
+        __instance.isPlayingFromPlaylist = false;
+        __instance.wasPlayingLastFrame = false;
+        __instance.playbackSamples = playbackSamples;
+        __instance.musicTrackQueue.SetCurrentTrack(index);
+        __instance.musicTrackQueue.ClearBuffer();
+        __instance.musicTrackQueue.ClearMusicQueue();
+        __instance.musicTrackQueue.AddAllCurrentTracksToQueue();
+        if (BombRushRadio.CacheAudios.Value)
+        {
+            MusicTrack t = __instance.musicTrackQueue.currentMusicTracks[index];
+            if (BombRushRadio.audios.Find(m => m.Title == t.Title && m.Artist == t.Artist) && t.AudioClip == null)
+            {
+                string[] sp = BombRushRadio.filePaths[t.Artist + "-" + t.Title].Split(',');
+                t.AudioClip = Helpers.LoadACFromCache(sp[0], sp[1]);
+                Debug.Log("[BRR] Loaded cache for " + t.Title + ". Length: " + t.AudioClip.length);
+
+            }
+        }
+        __instance.StartMusicPlayer();
+        return false;
     }
 }

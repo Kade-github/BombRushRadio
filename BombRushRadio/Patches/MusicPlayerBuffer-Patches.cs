@@ -35,7 +35,6 @@ public class MusicPlayerBuffer_Patches
             if (BombRushRadio.CacheAudios.Value)
             {
                 t.AudioClip.UnloadAudioData();
-                t.AudioClip.SetData(new float[] { }, 0);
                 t.AudioClip = null;
                 Debug.Log("[BRR] Unloaded cache for " + t.Title);
             }

@@ -15,7 +15,7 @@ using UnityEngine.Networking;
 
 namespace BombRushRadio
 {
-    [BepInPlugin("kade.bombrushradio", "Bomb Rush Radio!", "1.3.0.0")]
+    [BepInPlugin("kade.bombrushradio", "Bomb Rush Radio!", "1.3.2.0")]
     [BepInProcess("Bomb Rush Cyberfunk.exe")]
     public class BombRushRadio : BaseUnityPlugin
     {
@@ -84,6 +84,7 @@ namespace BombRushRadio
             string tagFile = directory + "/" + songArtist + "-" +
                              songName + ".tag";
             filePaths.Add(songArtist + "-" + songName, cacheFile + "," + tagFile);
+
             if (CacheAudios.Value)
             {
                 if (File.Exists(cacheFile)) // cache
@@ -93,6 +94,7 @@ namespace BombRushRadio
                     t.Artist = songArtist;
                     t.Title = songName;
                     t.isRepeatable = false;
+
                     audios.Add(t);
                     done++;
                     loaded.Add(songArtist + "-" + songName);
@@ -130,7 +132,7 @@ namespace BombRushRadio
                     myClip.name = clean;
                     if (CacheAudios.Value)
                     {
-                        int lengthInSamples = myClip.samples * myClip.channels;
+                        int lengthInSamples = (myClip.samples * myClip.channels) / 2;
                         float[] samples = new float[lengthInSamples];
                         myClip.GetData(samples, 0);
 
