@@ -36,49 +36,40 @@
     </PropertyGroup>
     <ItemGroup>
         <Reference Include="0Harmony">
-          <HintPath>..\..\..\steamInstall\steamapps\common\BombRushCyberfunk\BepInEx\core\0Harmony.dll</HintPath>
+          <HintPath>C:\Users\kadep\OneDrive\Documents\bep5.0\BepInEx\core\0Harmony.dll</HintPath>
         </Reference>
         <Reference Include="Assembly-CSharp">
           <HintPath>..\Assembly-CSharp-publicized.dll</HintPath>
         </Reference>
-        <Reference Include="BepInEx.Core">
-          <HintPath>..\..\..\steamInstall\steamapps\common\BombRushCyberfunk\BepInEx\core\BepInEx.Core.dll</HintPath>
+        <Reference Include="BepInEx">
+          <HintPath>C:\Users\kadep\OneDrive\Documents\bep5.0\BepInEx\core\BepInEx.dll</HintPath>
         </Reference>
-        <Reference Include="BepInEx.Preloader.Core">
-          <HintPath>..\..\..\steamInstall\steamapps\common\BombRushCyberfunk\BepInEx\core\BepInEx.Preloader.Core.dll</HintPath>
+        <Reference Include="BepInEx.Harmony">
+          <HintPath>C:\Users\kadep\OneDrive\Documents\bep5.0\BepInEx\core\BepInEx.Harmony.dll</HintPath>
         </Reference>
-        <Reference Include="BepInEx.Preloader.Unity">
-          <HintPath>..\..\..\steamInstall\steamapps\common\BombRushCyberfunk\BepInEx\core\BepInEx.Preloader.Unity.dll</HintPath>
+        <Reference Include="BepInEx.Preloader">
+          <HintPath>C:\Users\kadep\OneDrive\Documents\bep5.0\BepInEx\core\BepInEx.Preloader.dll</HintPath>
         </Reference>
-        <Reference Include="BepInEx.Unity">
-          <HintPath>..\..\..\steamInstall\steamapps\common\BombRushCyberfunk\BepInEx\core\BepInEx.Unity.dll</HintPath>
+        <Reference Include="HarmonyXInterop">
+          <HintPath>C:\Users\kadep\OneDrive\Documents\bep5.0\BepInEx\core\HarmonyXInterop.dll</HintPath>
         </Reference>
         <Reference Include="Mono.Cecil">
-          <HintPath>..\..\..\steamInstall\steamapps\common\BombRushCyberfunk\BepInEx\core\Mono.Cecil.dll</HintPath>
+          <HintPath>C:\Users\kadep\OneDrive\Documents\bep5.0\BepInEx\core\Mono.Cecil.dll</HintPath>
         </Reference>
         <Reference Include="Mono.Cecil.Mdb">
-          <HintPath>..\..\..\steamInstall\steamapps\common\BombRushCyberfunk\BepInEx\core\Mono.Cecil.Mdb.dll</HintPath>
+          <HintPath>C:\Users\kadep\OneDrive\Documents\bep5.0\BepInEx\core\Mono.Cecil.Mdb.dll</HintPath>
         </Reference>
         <Reference Include="Mono.Cecil.Pdb">
-          <HintPath>..\..\..\steamInstall\steamapps\common\BombRushCyberfunk\BepInEx\core\Mono.Cecil.Pdb.dll</HintPath>
+          <HintPath>C:\Users\kadep\OneDrive\Documents\bep5.0\BepInEx\core\Mono.Cecil.Pdb.dll</HintPath>
         </Reference>
         <Reference Include="Mono.Cecil.Rocks">
-          <HintPath>..\..\..\steamInstall\steamapps\common\BombRushCyberfunk\BepInEx\core\Mono.Cecil.Rocks.dll</HintPath>
-        </Reference>
-        <Reference Include="Mono.Posix">
-          <HintPath>..\..\..\steamInstall\steamapps\common\BombRushCyberfunk\Bomb Rush Cyberfunk_Data\Managed\Mono.Posix.dll</HintPath>
-        </Reference>
-        <Reference Include="Mono.Security">
-          <HintPath>..\..\..\steamInstall\steamapps\common\BombRushCyberfunk\Bomb Rush Cyberfunk_Data\Managed\Mono.Security.dll</HintPath>
-        </Reference>
-        <Reference Include="Mono.WebBrowser">
-          <HintPath>..\..\..\steamInstall\steamapps\common\BombRushCyberfunk\Bomb Rush Cyberfunk_Data\Managed\Mono.WebBrowser.dll</HintPath>
+          <HintPath>C:\Users\kadep\OneDrive\Documents\bep5.0\BepInEx\core\Mono.Cecil.Rocks.dll</HintPath>
         </Reference>
         <Reference Include="MonoMod.RuntimeDetour">
-          <HintPath>..\..\..\steamInstall\steamapps\common\BombRushCyberfunk\BepInEx\core\MonoMod.RuntimeDetour.dll</HintPath>
+          <HintPath>C:\Users\kadep\OneDrive\Documents\bep5.0\BepInEx\core\MonoMod.RuntimeDetour.dll</HintPath>
         </Reference>
         <Reference Include="MonoMod.Utils">
-          <HintPath>..\..\..\steamInstall\steamapps\common\BombRushCyberfunk\BepInEx\core\MonoMod.Utils.dll</HintPath>
+          <HintPath>C:\Users\kadep\OneDrive\Documents\bep5.0\BepInEx\core\MonoMod.Utils.dll</HintPath>
         </Reference>
         <Reference Include="SemanticVersioning">
           <HintPath>..\..\..\steamInstall\steamapps\common\BombRushCyberfunk\BepInEx\core\SemanticVersioning.dll</HintPath>
@@ -102,6 +93,9 @@
         <Reference Include="UnityEngine.InputModule">
           <HintPath>..\..\..\steamInstall\steamapps\common\BombRushCyberfunk\Bomb Rush Cyberfunk_Data\Managed\UnityEngine.InputModule.dll</HintPath>
         </Reference>
+        <Reference Include="UnityEngine.UI">
+          <HintPath>..\..\..\steamInstall\steamapps\common\BombRushCyberfunk\Bomb Rush Cyberfunk_Data\Managed\UnityEngine.UI.dll</HintPath>
+        </Reference>
         <Reference Include="UnityEngine.UnityWebRequestAssetBundleModule">
           <HintPath>..\..\..\steamInstall\steamapps\common\BombRushCyberfunk\Bomb Rush Cyberfunk_Data\Managed\UnityEngine.UnityWebRequestAssetBundleModule.dll</HintPath>
         </Reference>
@@ -116,11 +110,17 @@
         </Reference>
     </ItemGroup>
     <ItemGroup>
-        <Compile Include="BaseModule-Patches.cs" />
+        <Compile Include="App\AppBombRushRadio.cs" />
+        <Compile Include="App\BombRushRadio-ButtonList.cs" />
         <Compile Include="BombRushRadio.cs" />
-        <Compile Include="MusicPlayer-Patches.cs" />
-        <Compile Include="MusicPlayerBuffer-Patches.cs" />
+        <Compile Include="Helpers.cs" />
+        <Compile Include="Patches\BaseModule-Patches.cs" />
+        <Compile Include="Patches\MusicPlayer-Patches.cs" />
+        <Compile Include="Patches\MusicPlayerBuffer-Patches.cs" />
         <Compile Include="Properties\AssemblyInfo.cs" />
+    </ItemGroup>
+    <ItemGroup>
+      <None Include="App.config" />
     </ItemGroup>
     <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
     <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 

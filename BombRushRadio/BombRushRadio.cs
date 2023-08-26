@@ -15,21 +15,21 @@ using UnityEngine.Networking;
 
 namespace BombRushRadio
 {
-    [BepInPlugin("kade.bombrushradio", "Bomb Rush Radio!", "1.1.1.0")]
+    [BepInPlugin("kade.bombrushradio", "Bomb Rush Radio!", "1.3.0.0")]
     [BepInProcess("Bomb Rush Cyberfunk.exe")]
     public class BombRushRadio : BaseUnityPlugin
     {
+        public static ConfigEntry<bool> CacheAudios = null!;
         public static MusicPlayer mInstance;
-        public static BombRushRadio Instance = null;
         public static List<MusicTrack> audios = new();
-        public int shouldBeDone = 0;
-        public int done = 0;
+        public static Dictionary<string, string> filePaths = new();
+        public int shouldBeDone;
+        public int done;
 
         private static List<String> loaded = new();
         
         public static bool inMainMenu = false;
-        public static bool loading = false;
-        public static bool addOnComplete = false;
+        public static bool loading;
 
         public void SanitizeSongs()
         {
@@ -49,8 +49,11 @@ namespace BombRushRadio
                         toRemove.Add(tr);
                     }
                     else if (!mInstance.musicTrackQueue.currentMusicTracks.Contains(tr))
+                    {
+                        Logger.LogInfo("[BRR] Added " + tr.Title);
                         Core.Instance.audioManager.musicPlayer.AddMusicTrack(tr);
-                                    
+                    }
+
                 }
 
                 foreach (MusicTrack tr in toRemove)
@@ -64,7 +67,40 @@ namespace BombRushRadio
         }
         public IEnumerator LoadAudioFile(string filePath, AudioType type)
         {
+            string cleanN = filePath;
             string clean = filePath.Split('\\').Last();
+            
+            string extension = clean.Split('.').Last().ToLower();
+            string[] spl = clean.Substring(0,clean.Length - extension.Length - 1).Split('-');
+            string songName = spl[1];
+            string songArtist = spl[0];
+
+            string fullClean = cleanN.Replace("\\", "/");
+
+            string directory = fullClean.Substring(0, fullClean.LastIndexOf("/", StringComparison.Ordinal));
+                    
+            string cacheFile = directory + "/" + songArtist + "-" +
+                               songName + ".cache";
+            string tagFile = directory + "/" + songArtist + "-" +
+                             songName + ".tag";
+            filePaths.Add(songArtist + "-" + songName, cacheFile + "," + tagFile);
+            if (CacheAudios.Value)
+            {
+                if (File.Exists(cacheFile)) // cache
+                {
+                    MusicTrack t = ScriptableObject.CreateInstance<MusicTrack>();
+                    t.AudioClip = null;
+                    t.Artist = songArtist;
+                    t.Title = songName;
+                    t.isRepeatable = false;
+                    audios.Add(t);
+                    done++;
+                    loaded.Add(songArtist + "-" + songName);
+                    Logger.LogInfo("[BRR] Cache found for " + songArtist + " - " + songName);
+                    yield break;
+                }
+            }
+
             // Escape special characters so we don't get an HTML error when we send the request
             filePath = UnityWebRequest.EscapeURL(filePath);
  
@@ -77,20 +113,40 @@ namespace BombRushRadio
                 }
                 else
                 {
-                    AudioClip myClip = DownloadHandlerAudioClip.GetContent(www);
-                    myClip.name = clean;
-                    string[] spl = clean.Substring(0,clean.Length - 4).Split('-');
-                    string songName = spl[1];
-                    string songArtist = spl[0];
+ 
+
+ 
+                    
                     done++;
-      
+
                     MusicTrack t = ScriptableObject.CreateInstance<MusicTrack>();
-                    t.AudioClip = myClip;
+                    t.AudioClip = null;
                     t.Artist = songArtist;
                     t.Title = songName;
                     t.isRepeatable = false;
+                    AudioClip
+                        myClip = DownloadHandlerAudioClip
+                            .GetContent(www); // this has preloadAudioData on it, which is bad.
+                    myClip.name = clean;
+                    if (CacheAudios.Value)
+                    {
+                        int lengthInSamples = myClip.samples * myClip.channels;
+                        float[] samples = new float[lengthInSamples];
+                        myClip.GetData(samples, 0);
+
+                        File.WriteAllBytes(cacheFile, Helpers.ConvertFloatToByte(samples));
+                        File.WriteAllText(tagFile,
+                            lengthInSamples + "," + myClip.channels + "," + myClip.frequency);
+                        myClip.UnloadAudioData();
+                        Logger.LogInfo("[BRR] Cached " + t.Artist + " - " + t.name);
+                    }
+                    else
+                    {
+                        t.AudioClip = myClip;
+                    }                    
                     audios.Add(t);
-                    
+
+
                     Logger.LogInfo("[BRR] Loaded " + songName + " by " + songArtist + " (" + done + "/" + shouldBeDone + ")");
                     loaded.Add(songArtist + "-" + songName);
                 }
@@ -100,10 +156,12 @@ namespace BombRushRadio
         {
             string clean = f.Split('\\').Last();
             string extension = f.Split('.').Last().ToLower();
+            if (!clean.Contains("-"))
+                Logger.LogError("[BRR] " + clean + " doesn't contain a '-' and will not be loaded!");
             string[] spl = clean.Substring(0,clean.Length - extension.Length - 1).Split('-');
             string songName = spl[1];
             string songArtist = spl[0];
-            if (audios.Find(m => m.Artist == songArtist && songName == m.Title))
+            if (audios.Find(m => m.Artist == songArtist && songName == m.Title) && extension != "cache" && extension != "tag")
             {
                 loaded.Add(songArtist + "-" + songName);
                 Logger.LogInfo("[BRR] " + songName + " is already loaded, skipping.");
@@ -116,38 +174,51 @@ namespace BombRushRadio
                     case "aif":
                     case "aiff":
                         type = AudioType.AIFF;
+                        shouldBeDone++;
+                        StartCoroutine(LoadAudioFile(f, type));
                         break;
                     case "it":
                         type = AudioType.IT;
+                        shouldBeDone++;
+                        StartCoroutine(LoadAudioFile(f, type));
                         break;
                     case "mod":
                         type = AudioType.MOD;
+                        shouldBeDone++;
+                        StartCoroutine(LoadAudioFile(f, type));
                         break;
                     case "mp2":
                     case "mp3":
                         type = AudioType.MPEG;
+                        shouldBeDone++;
+                        StartCoroutine(LoadAudioFile(f, type));
                         break;
                     case "ogg":
                         type = AudioType.OGGVORBIS;
+                        shouldBeDone++;
+                        StartCoroutine(LoadAudioFile(f, type));
                         break;
                     case "s3m":
                         type = AudioType.S3M;
+                        shouldBeDone++;
+                        StartCoroutine(LoadAudioFile(f, type));
                         break;
                     case "wav":
                         type = AudioType.WAV;
+                        shouldBeDone++;
+                        StartCoroutine(LoadAudioFile(f, type));
                         break;
                     case "xm":
                         type = AudioType.XM;
+                        shouldBeDone++;
+                        StartCoroutine(LoadAudioFile(f, type));
                         break;
                     case "flac":
-                        break;
-                    default:
-                        yield return null;
+                        shouldBeDone++;
+                        StartCoroutine(LoadAudioFile(f, type));
                         break;
                 }
-
-                shouldBeDone++;
-                StartCoroutine(LoadAudioFile(f, type));
+                
             }
             yield return null;
         }
@@ -179,7 +250,6 @@ namespace BombRushRadio
                 if (Core.Instance.audioManager.musicPlayer.IsPlaying && mInstance != null)
                 {
                     Core.Instance.audioManager.musicPlayer.ForcePaused();
-                    addOnComplete = true;
                 }
             }
             
@@ -190,7 +260,6 @@ namespace BombRushRadio
             yield return StartCoroutine(SearchDirectories());
             
             Logger.LogInfo("[BRR] Bomb Rush Radio has been loaded!");
-            audios.Sort((m,m2) => String.Compare(m.Title, m2.Title, StringComparison.Ordinal));
             loading = false;
             
             SanitizeSongs();
@@ -199,7 +268,6 @@ namespace BombRushRadio
 
         private void Awake()
         {
-            Instance = this;
             // setup mod dirs
             if (!Directory.Exists(Application.streamingAssetsPath + "/Mods"))
                 Directory.CreateDirectory(Application.streamingAssetsPath + "/Mods");
@@ -207,6 +275,11 @@ namespace BombRushRadio
                 Directory.CreateDirectory(Application.streamingAssetsPath + "/Mods/BombRushRadio");
             if (!Directory.Exists(Application.streamingAssetsPath + "/Mods/BombRushRadio/Songs"))
                 Directory.CreateDirectory(Application.streamingAssetsPath + "/Mods/BombRushRadio/Songs");
+            
+            // bind to config
+
+            CacheAudios = Config.Bind("Audio", "Caching", false,
+                "Caches audios to disc (Pros: Memory is lowered significantly, Any startup load time after the first start is lowered significantly, Cons: Stutters on play (depending on audio size), Caching on disc can be expensive on storage (depending on audio size/format))");
             
             // load em
             
@@ -216,12 +289,20 @@ namespace BombRushRadio
             harmony.PatchAll();
             Logger.LogInfo("[BRR] Patched...");
 
-            bool sanitizePlease = false;
+
+            bool created = false;
             
             Core.OnUpdate += () =>
             {
                 if (Input.GetKeyDown(KeyCode.F1) && !inMainMenu) // reload songs
-                    StartCoroutine(ReloadSongs());
+                {
+                    if (!CacheAudios.Value)
+                        StartCoroutine(ReloadSongs());
+                    else
+                    {
+                        Logger.LogWarning("[BRR] Reloading cached audios is not supported atm (im lazy)");
+                    }
+                }
             };
         }
     }
