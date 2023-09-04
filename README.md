@@ -2,7 +2,7 @@
   <img src="https://github.com/Kade-github/BombRushRadio/assets/26305836/0ffccadb-8004-437f-8543-5040c219fff2">
 </p>
 
-# **BRR** does work on the current version of the game (publicbeta)
+# **BRR** does work on the current version of the game
 
 # BombRushRadio
 A Bomb Rush Cyberfunk mod that lets you add custom music into the game!
