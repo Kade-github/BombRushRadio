@@ -20,15 +20,14 @@ public class MusicPlayer_Patches
 
         foreach (MusicTrack track in BombRushRadio.audios)
         {
-            if (__instance.musicTrackQueue.currentMusicTracks.Find(m =>
-                    m.Title == track.Title && m.Artist == track.Artist) != null)
+            if (__instance.musicTrackQueue.currentMusicTracks.Find(m => m.Title == track.Title && m.Artist == track.Artist) != null)
                 continue;
-            
+
             __instance.musicTrackQueue.currentMusicTracks.Add(track);
         }
 
         __instance.musicTrackQueue.BufferTracksInQueue();
-        
+
         return true;
     }
 }
@@ -40,6 +39,7 @@ public class MusicTrackQueue_Patches
     {
         if (BombRushRadio.audios.Find(m => musicTrack.Artist == m.Artist && musicTrack.Title == m.Title))
             return false;
+
         return true;
     }
 }
@@ -54,19 +54,22 @@ public class MusicTrackQueue_Patches_SelectNextTrack
     }
 }
 
-
 [HarmonyPatch(typeof(MusicTrackQueue), nameof(MusicTrackQueue.EvaluateNextTrack))]
 public class MusicTrackQueue_Patches_EvaluateNextTrack
 {
     static bool Prefix(MusicTrackQueue __instance, int nextTrackIndex)
     {
         Debug.Log("[BRR] Next Track!");
+
         if (BombRushRadio.CacheAudios.Value)
         {
             MusicTrack t = __instance.currentMusicTracks[nextTrackIndex];
+
             if (BombRushRadio.audios.Find(m => m.Title == t.Title && m.Artist == t.Artist) && t.AudioClip == null)
             {
-                string[] sp = BombRushRadio.filePaths[t.Artist + "-" + t.Title].Split(',');
+                string cacheName = Helpers.FormatSong(new string[] { t.Artist, t.Title }, "dash");
+
+                string[] sp = BombRushRadio.filePaths[cacheName].Split(',');
                 t.AudioClip = Helpers.LoadACFromCache(sp[0], sp[1]);
                 Debug.Log("[BRR] Loaded cache for " + t.Title + ". Length: " + t.AudioClip.length);
             }
@@ -98,17 +101,21 @@ public class MusicPlayer_Patches_PlayFrom
         __instance.musicTrackQueue.ClearBuffer();
         __instance.musicTrackQueue.ClearMusicQueue();
         __instance.musicTrackQueue.AddAllCurrentTracksToQueue();
+
         if (BombRushRadio.CacheAudios.Value)
         {
             MusicTrack t = __instance.musicTrackQueue.currentMusicTracks[index];
+
             if (BombRushRadio.audios.Find(m => m.Title == t.Title && m.Artist == t.Artist) && t.AudioClip == null)
             {
-                string[] sp = BombRushRadio.filePaths[t.Artist + "-" + t.Title].Split(',');
+                string cacheName = Helpers.FormatSong(new string[] { t.Artist, t.Title }, "dash");
+
+                string[] sp = BombRushRadio.filePaths[cacheName].Split(',');
                 t.AudioClip = Helpers.LoadACFromCache(sp[0], sp[1]);
                 Debug.Log("[BRR] Loaded cache for " + t.Title + ". Length: " + t.AudioClip.length);
-
             }
         }
+
         __instance.StartMusicPlayer();
         return false;
     }
