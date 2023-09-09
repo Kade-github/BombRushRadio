@@ -94,6 +94,7 @@ public class MusicPlayer_Patches_PlayFrom
 {
     static bool Prefix(MusicPlayer __instance, int index, int playbackSamples = 0)
     {
+        __instance.ForcePaused();
         __instance.isPlayingFromPlaylist = false;
         __instance.wasPlayingLastFrame = false;
         __instance.playbackSamples = playbackSamples;

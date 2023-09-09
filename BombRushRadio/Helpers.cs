@@ -31,21 +31,47 @@ public class Helpers
         return a;
     }
 
-    public static string[] GetSongMetadata(string filePath)
+    public static string[] GetSongMetadata(string filePath, bool oldMethod)
     {
         string songName;
         string songArtist = String.Empty;
 
-        string fileName = Path.GetFileNameWithoutExtension(filePath);
-
-        if (!fileName.Contains("-"))
+        if (!oldMethod)
         {
-            songName = fileName;
+            try
+            {
+                var tag = TagLib.File.Create(filePath);
+                songName = tag.Tag.Title;
+
+                for (int i = 0; i < tag.Tag.Performers.Length; i++)
+                {
+                    if (i == tag.Tag.Performers.Length - 1)
+                        songArtist += tag.Tag.Performers[i];
+                    else
+                        songArtist += $"{tag.Tag.Performers[i]}, ";
+                }
+            }
+            catch (Exception)
+            {
+                return GetSongMetadata(filePath, true);
+            }
+
+            if (String.IsNullOrEmpty(songName))
+                return GetSongMetadata(filePath, true);
         }
         else
         {
-            songArtist = fileName.Split('-').First();
-            songName = fileName.Substring(songArtist.Length + 1);
+            string fileName = Path.GetFileNameWithoutExtension(filePath);
+
+            if (!fileName.Contains("-"))
+            {
+                songName = fileName;
+            }
+            else
+            {
+                songArtist = fileName.Split('-').First();
+                songName = fileName.Substring(songArtist.Length + 1);
+            }
         }
 
         if (!String.IsNullOrEmpty(songArtist))

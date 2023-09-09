@@ -23,9 +23,6 @@ Launch the game once, then navigate to your games root directory, go into **"Bom
 - XM
 - FLAC
 
-The metadata format is pretty simple. If the file name is not this, it will only fill in the song name: **Artist-Song Title**
-
-
 It should look like this:
 
 ![image](https://github.com/Kade-github/BombRushRadio/assets/26305836/c30022e8-703f-4918-9a46-b70a65019be6)
