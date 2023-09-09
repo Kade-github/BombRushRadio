@@ -96,6 +96,12 @@ Want to reload songs on the fly? Make some changes in the song folder and press 
 
 Create a Publicized Assembly of the game, through anything (I used BepInEx's one, oh and I can't provide this because its a paid game)
 
-And then open the .sln, and add in most of the missing references.
+(put that file in the root directory, called "Assembly-CSharp.dll")
+
+And then open the .sln.
+
+Make sure to add "https://nuget.bepinex.dev/v3/index.json" as a NuGet source. (in rider heres how it looks)
+
+<tbd>
 
 Then just build it.
