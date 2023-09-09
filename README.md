@@ -102,6 +102,6 @@ And then open the .sln.
 
 Make sure to add "https://nuget.bepinex.dev/v3/index.json" as a NuGet source. (in rider heres how it looks)
 
-<tbd>
+![image](https://github.com/Kade-github/BombRushRadio/assets/26305836/e128d6c4-debd-4d02-a51b-85b7f8b21517)
 
 Then just build it.
