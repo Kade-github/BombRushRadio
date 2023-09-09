@@ -31,6 +31,8 @@ namespace BombRushRadio
         public static bool inMainMenu = false;
         public static bool loading;
 
+        private readonly string cachePath = Path.Combine(Paths.CachePath, "BombRushRadio");
+
         public void SanitizeSongs()
         {
             if (Core.Instance == null)
@@ -75,14 +77,11 @@ namespace BombRushRadio
             string songName = spl[1];
             string songArtist = spl[0];
 
-            string fullClean = cleanN.Replace("\\", "/");
-
-            string directory = fullClean.Substring(0, fullClean.LastIndexOf("/", StringComparison.Ordinal));
-                    
-            string cacheFile = directory + "/" + songArtist + "-" +
+            string cacheFile = cachePath + "/" + songArtist + "-" +
                                songName + ".cache";
-            string tagFile = directory + "/" + songArtist + "-" +
+            string tagFile = cachePath + "/" + songArtist + "-" +
                              songName + ".tag";
+
             filePaths.Add(songArtist + "-" + songName, cacheFile + "," + tagFile);
 
             if (CacheAudios.Value)
@@ -158,12 +157,19 @@ namespace BombRushRadio
         {
             string clean = f.Split('\\').Last();
             string extension = f.Split('.').Last().ToLower();
+
+            if (extension is "cache" or "tag")
+            {
+                File.Delete(f); // Remove old cache files
+                yield return null;
+            }
+
             if (!clean.Contains("-"))
                 Logger.LogError("[BRR] " + clean + " doesn't contain a '-' and will not be loaded!");
             string[] spl = clean.Substring(0,clean.Length - extension.Length - 1).Split('-');
             string songName = spl[1];
             string songArtist = spl[0];
-            if (audios.Find(m => m.Artist == songArtist && songName == m.Title) && extension != "cache" && extension != "tag")
+            if (audios.Find(m => m.Artist == songArtist && songName == m.Title))
             {
                 loaded.Add(songArtist + "-" + songName);
                 Logger.LogInfo("[BRR] " + songName + " is already loaded, skipping.");
@@ -282,7 +288,11 @@ namespace BombRushRadio
 
             CacheAudios = Config.Bind("Audio", "Caching", false,
                 "Caches audios to disc (Pros: Memory is lowered significantly, Any startup load time after the first start is lowered significantly, Cons: Stutters on play (depending on audio size), Caching on disc can be expensive on storage (depending on audio size/format))");
-            
+
+            // setup cache directory
+            if (CacheAudios.Value && !Directory.Exists(cachePath))
+                Directory.CreateDirectory(cachePath);
+
             // load em
             
             StartCoroutine(ReloadSongs());
