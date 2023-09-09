@@ -9,9 +9,9 @@ A Bomb Rush Cyberfunk mod that lets you add custom music into the game!
 
 ## How to use
 
-Launch the game once, then navigate to your games root directory, go into **"Bomb Rush Cyberfunk_Data/StreamingAssets/Mods/BombRushRadio/Songs/"** which the mod should have created, then drag your songs into that folder. Make sure it's a supported format.
+Launch the game once, then navigate to your games root directory, go into **"Bomb Rush Cyberfunk_Data/StreamingAssets/Mods/BombRushRadio/Songs/"** which the mod should have created, then drag your songs into that folder. Make sure it's a supported audio format.
 
-### Supported Formats
+### Supported Audio Formats
 - AIF(F)
 - IT
 - MOD
@@ -23,18 +23,15 @@ Launch the game once, then navigate to your games root directory, go into **"Bom
 - XM
 - FLAC
 
-The format is pretty simple, 
-
-## if the format is not this (it will not work):
-# "**Artist-SongTitle**"
+The metadata format is pretty simple. If the file name is not this, it will only fill in the song name: **Artist-Song Title**
 
 
-It should look like this
+It should look like this:
 
 ![image](https://github.com/Kade-github/BombRushRadio/assets/26305836/c30022e8-703f-4918-9a46-b70a65019be6)
 
 
-(You can also use folders, like this)
+You can also use folders, like this:
 
 ![image](https://github.com/Kade-github/BombRushRadio/assets/26305836/dc977b6b-2e49-461f-94a2-e1a2955041b8)
 
