@@ -31,7 +31,7 @@ public class Helpers
         return a;
     }
 
-    public static string[] GetSongMetadata(string filePath, bool oldMethod)
+    public static string[] GetMetadata(string filePath, bool oldMethod)
     {
         string songName;
         string songArtist = String.Empty;
@@ -53,11 +53,11 @@ public class Helpers
             }
             catch (Exception)
             {
-                return GetSongMetadata(filePath, true);
+                return GetMetadata(filePath, true);
             }
 
             if (String.IsNullOrEmpty(songName))
-                return GetSongMetadata(filePath, true);
+                return GetMetadata(filePath, true);
         }
         else
         {
@@ -80,16 +80,15 @@ public class Helpers
         return new string[] { songArtist, songName.Trim() };
     }
 
-    public static string FormatSong(string[] metadata, string type)
+    public static string FormatMetadata(string[] metadata, string type)
     {
-        switch (type)
-        {
-            default:
-            case "dash":
-                return !String.IsNullOrEmpty(metadata[0]) ? $"{metadata[0]} - {metadata[1]}" : metadata[1];
+        if (String.IsNullOrEmpty(metadata[0]))
+            return metadata[1];
 
-            case "by":
-                return !String.IsNullOrEmpty(metadata[0]) ? $"{metadata[1]} by {metadata[0]}" : metadata[1];
-        }
+        return type switch
+        {
+            "by" => $"{metadata[1]} by {metadata[0]}",
+            _ => $"{metadata[0]} - {metadata[1]}",
+        };
     }
 }
