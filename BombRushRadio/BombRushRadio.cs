@@ -71,10 +71,10 @@ namespace BombRushRadio
 
         public IEnumerator LoadAudioFile(string filePath, AudioType type)
         {
-            string[] metadata = Helpers.GetSongMetadata(filePath);
+            string[] metadata = Helpers.GetSongMetadata(filePath, false);
 
             string songName = Helpers.FormatSong(metadata, "dash");
-            string validName = string.Concat(songName.Split(Path.GetInvalidFileNameChars()));
+            string validName = String.Concat(songName.Split(Path.GetInvalidFileNameChars()));
 
             string cacheFile = Path.Combine(cachePath, validName + ".cache");
             string tagFile = Path.Combine(cachePath, validName + ".tag");
@@ -157,7 +157,7 @@ namespace BombRushRadio
                 yield return null;
             }
 
-            string[] metadata = Helpers.GetSongMetadata(f);
+            string[] metadata = Helpers.GetSongMetadata(f, false);
 
             if (audios.Find(m => m.Artist == metadata[0] && m.Title == metadata[1]))
             {
