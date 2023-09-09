@@ -26,7 +26,7 @@ public class Helpers
 
         string[] c = File.ReadAllText(tagFile).Split(',');
         
-        AudioClip a = AudioClip.Create("cachedAudioAsset", samples.Length, int.Parse(c[1]), int.Parse(c[2]), false);
+        AudioClip a = AudioClip.Create("cachedAudioAsset", int.Parse(c[0]), int.Parse(c[1]), int.Parse(c[2]), false);
         a.SetData(samples, 0);
         return a;
     }

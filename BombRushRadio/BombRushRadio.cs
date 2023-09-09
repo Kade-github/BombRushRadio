@@ -131,13 +131,13 @@ namespace BombRushRadio
                     myClip.name = clean;
                     if (CacheAudios.Value)
                     {
-                        int lengthInSamples = (myClip.samples * myClip.channels) / 2;
+                        int lengthInSamples = myClip.samples * myClip.channels;
                         float[] samples = new float[lengthInSamples];
                         myClip.GetData(samples, 0);
 
                         File.WriteAllBytes(cacheFile, Helpers.ConvertFloatToByte(samples));
                         File.WriteAllText(tagFile,
-                            lengthInSamples + "," + myClip.channels + "," + myClip.frequency);
+                            myClip.samples + "," + myClip.channels + "," + myClip.frequency);
                         myClip.UnloadAudioData();
                         Logger.LogInfo("[BRR] Cached " + t.Artist + " - " + t.name);
                     }
