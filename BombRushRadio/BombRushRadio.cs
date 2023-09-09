@@ -14,7 +14,7 @@ using UnityEngine.Networking;
 
 namespace BombRushRadio
 {
-    [BepInPlugin("kade.bombrushradio", "Bomb Rush Radio!", "1.3.2.0")]
+    [BepInPlugin("kade.bombrushradio", "Bomb Rush Radio!", "1.4")]
     [BepInProcess("Bomb Rush Cyberfunk.exe")]
 
     public class BombRushRadio : BaseUnityPlugin
