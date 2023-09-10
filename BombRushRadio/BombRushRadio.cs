@@ -45,7 +45,7 @@ namespace BombRushRadio
 
                 foreach (MusicTrack tr in audios)
                 {
-                    if (loaded.FirstOrDefault(l => l == Helpers.FormatSong(new string[] { tr.Artist, tr.Title }, "dash")) == null)
+                    if (loaded.FirstOrDefault(l => l == Helpers.FormatMetadata(new string[] { tr.Artist, tr.Title }, "dash")) == null)
                     {
                         Logger.LogInfo("[BRR] Removed " + tr.Title);
                         mInstance.musicTrackQueue.currentMusicTracks.Remove(tr);
@@ -60,7 +60,7 @@ namespace BombRushRadio
 
                 foreach (MusicTrack tr in toRemove)
                 {
-                    filePaths.Remove(Helpers.FormatSong(new string[] { tr.Artist, tr.Title }, "dash"));
+                    filePaths.Remove(Helpers.FormatMetadata(new string[] { tr.Artist, tr.Title }, "dash"));
                     audios.Remove(tr);
                     tr.AudioClip.UnloadAudioData();
                 }
@@ -71,9 +71,9 @@ namespace BombRushRadio
 
         public IEnumerator LoadAudioFile(string filePath, AudioType type)
         {
-            string[] metadata = Helpers.GetSongMetadata(filePath, false);
+            string[] metadata = Helpers.GetMetadata(filePath, false);
 
-            string songName = Helpers.FormatSong(metadata, "dash");
+            string songName = Helpers.FormatMetadata(metadata, "dash");
             string validName = String.Concat(songName.Split(Path.GetInvalidFileNameChars()));
 
             string cacheFile = Path.Combine(cachePath, validName + ".cache");
@@ -95,7 +95,7 @@ namespace BombRushRadio
                     audios.Add(t);
                     done++;
                     loaded.Add(songName);
-                    Logger.LogInfo("[BRR] Cache found for " + Helpers.FormatSong(metadata, "dash"));
+                    Logger.LogInfo("[BRR] Cache found for " + Helpers.FormatMetadata(metadata, "dash"));
                     yield break;
                 }
             }
@@ -132,7 +132,7 @@ namespace BombRushRadio
                         File.WriteAllBytes(cacheFile, Helpers.ConvertFloatToByte(samples));
                         File.WriteAllText(tagFile, myClip.samples + "," + myClip.channels + "," + myClip.frequency);
                         myClip.UnloadAudioData();
-                        Logger.LogInfo("[BRR] Cached " + Helpers.FormatSong(metadata, "dash"));
+                        Logger.LogInfo("[BRR] Cached " + Helpers.FormatMetadata(metadata, "dash"));
                     }
                     else
                     {
@@ -141,7 +141,7 @@ namespace BombRushRadio
 
                     audios.Add(t);
 
-                    Logger.LogInfo($"[BRR] Loaded {Helpers.FormatSong(metadata, "by")} ({done}/{shouldBeDone})");
+                    Logger.LogInfo($"[BRR] Loaded {Helpers.FormatMetadata(metadata, "by")} ({done}/{shouldBeDone})");
                     loaded.Add(songName);
                 }
             }
@@ -157,11 +157,11 @@ namespace BombRushRadio
                 yield return null;
             }
 
-            string[] metadata = Helpers.GetSongMetadata(f, false);
+            string[] metadata = Helpers.GetMetadata(f, false);
 
             if (audios.Find(m => m.Artist == metadata[0] && m.Title == metadata[1]))
             {
-                string songName = Helpers.FormatSong(metadata, "dash");
+                string songName = Helpers.FormatMetadata(metadata, "dash");
                 loaded.Add(songName);
                 Logger.LogInfo("[BRR] " + songName + " is already loaded, skipping.");
             }
@@ -266,7 +266,7 @@ namespace BombRushRadio
 
         private void Awake()
         {
-            // setup mod dirs
+            // setup mod directory
             if (!Directory.Exists(songFolder))
                 Directory.CreateDirectory(songFolder);
 

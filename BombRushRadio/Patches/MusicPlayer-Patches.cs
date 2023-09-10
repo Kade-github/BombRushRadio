@@ -67,7 +67,7 @@ public class MusicTrackQueue_Patches_EvaluateNextTrack
 
             if (BombRushRadio.audios.Find(m => m.Title == t.Title && m.Artist == t.Artist) && t.AudioClip == null)
             {
-                string cacheName = Helpers.FormatSong(new string[] { t.Artist, t.Title }, "dash");
+                string cacheName = Helpers.FormatMetadata(new string[] { t.Artist, t.Title }, "dash");
 
                 string[] sp = BombRushRadio.filePaths[cacheName].Split(',');
                 t.AudioClip = Helpers.LoadACFromCache(sp[0], sp[1]);
@@ -109,7 +109,7 @@ public class MusicPlayer_Patches_PlayFrom
 
             if (BombRushRadio.audios.Find(m => m.Title == t.Title && m.Artist == t.Artist) && t.AudioClip == null)
             {
-                string cacheName = Helpers.FormatSong(new string[] { t.Artist, t.Title }, "dash");
+                string cacheName = Helpers.FormatMetadata(new string[] { t.Artist, t.Title }, "dash");
 
                 string[] sp = BombRushRadio.filePaths[cacheName].Split(',');
                 t.AudioClip = Helpers.LoadACFromCache(sp[0], sp[1]);
