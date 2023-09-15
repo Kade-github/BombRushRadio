@@ -20,6 +20,7 @@ namespace BombRushRadio
     public class BombRushRadio : BaseUnityPlugin
     {
         public static ConfigEntry<bool> CacheAudios = null!;
+        public static ConfigEntry<bool> PreloadCache = null!;
         public static MusicPlayer mInstance;
         public static List<MusicTrack> audios = new();
         public static Dictionary<string, string> filePaths = new();
@@ -62,7 +63,9 @@ namespace BombRushRadio
                 {
                     filePaths.Remove(Helpers.FormatMetadata(new string[] { tr.Artist, tr.Title }, "dash"));
                     audios.Remove(tr);
-                    tr.AudioClip.UnloadAudioData();
+
+                    if (!CacheAudios.Value || (CacheAudios.Value && PreloadCache.Value))
+                        tr.AudioClip.UnloadAudioData();
                 }
 
                 mInstance.musicTrackQueue.currentMusicTracks.Sort((m,m2) => String.Compare(m.Title, m2.Title, StringComparison.Ordinal));
@@ -87,7 +90,7 @@ namespace BombRushRadio
                 if (File.Exists(cacheFile)) // cache
                 {
                     MusicTrack t = ScriptableObject.CreateInstance<MusicTrack>();
-                    t.AudioClip = null;
+                    t.AudioClip = PreloadCache.Value ? Helpers.LoadACFromCache(cacheFile, tagFile) : null;
                     t.Artist = metadata[0];
                     t.Title = metadata[1];
                     t.isRepeatable = false;
@@ -131,7 +134,12 @@ namespace BombRushRadio
 
                         File.WriteAllBytes(cacheFile, Helpers.ConvertFloatToByte(samples));
                         File.WriteAllText(tagFile, myClip.samples + "," + myClip.channels + "," + myClip.frequency);
-                        myClip.UnloadAudioData();
+
+                        if (PreloadCache.Value)
+                            t.AudioClip = myClip;
+                        else
+                            myClip.UnloadAudioData();
+
                         Logger.LogInfo("[BRR] Cached " + Helpers.FormatMetadata(metadata, "dash"));
                     }
                     else
@@ -272,7 +280,10 @@ namespace BombRushRadio
 
             // bind to config
             CacheAudios = Config.Bind("Audio", "Caching", false,
-                "Caches audios to disc (Pros: Memory is lowered significantly, Any startup load time after the first start is lowered significantly, Cons: Stutters on play (depending on audio size), Caching on disc can be expensive on storage (depending on audio size/format))");
+                "Caches audio to disk.\nPros: Memory is lowered significantly, any boot time after the first start is lowered significantly.\nCons: Stutters on play (depending on audio size), caching on disk can be expensive on storage. (depending on audio size/format)");
+
+            PreloadCache = Config.Bind("Audio", "PreloadCache", false,
+                "Preloads cached audio from disk.\nCauses slightly longer boot with memory usage increasing like without cache, but prevents stuttering when a song plays.\nRequires Caching to be enabled.");
 
             // setup cache directory
             if (CacheAudios.Value && !Directory.Exists(cachePath))
@@ -288,12 +299,7 @@ namespace BombRushRadio
             Core.OnUpdate += () =>
             {
                 if (Input.GetKeyDown(KeyCode.F1) && !inMainMenu) // reload songs
-                {
-                    if (!CacheAudios.Value)
-                        StartCoroutine(ReloadSongs());
-                    else
-                        Logger.LogWarning("[BRR] Reloading cached audios is not supported atm (im lazy)");
-                }
+                    StartCoroutine(ReloadSongs());
             };
         }
     }

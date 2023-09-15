@@ -37,16 +37,24 @@ You can also use folders, like this:
 # Config
 
 ```
-## Settings file was created by plugin Bomb Rush Radio! v1.3.1.0
+## Settings file was created by plugin Bomb Rush Radio! v1.4
 ## Plugin GUID: kade.bombrushradio
 
 [Audio]
 
-## Caches audios to disc (Pros: Memory is lowered significantly, Any startup load time after the first start is lowered significantly, Cons: Stutters on play (depending on audio size), Caching on disc can be expensive on storage (depending on audio size/format))
+## Caches audio to disk.
+## Pros: Memory is lowered significantly, any boot time after the first start is lowered significantly.
+## Cons: Stutters on play (depending on audio size), caching on disk can be expensive on storage. (depending on audio size/format)
 # Setting type: Boolean
 # Default value: false
 Caching = false
 
+## Preloads cached audio from disk.
+## Causes slightly longer boot with memory usage increasing like without cache, but prevents stuttering when a song plays.
+## Requires Caching to be enabled.
+# Setting type: Boolean
+# Default value: false
+PreloadCache = false
 
 ```
 

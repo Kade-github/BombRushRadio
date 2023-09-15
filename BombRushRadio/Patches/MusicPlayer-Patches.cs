@@ -61,7 +61,7 @@ public class MusicTrackQueue_Patches_EvaluateNextTrack
     {
         Debug.Log("[BRR] Next Track!");
 
-        if (BombRushRadio.CacheAudios.Value)
+        if (BombRushRadio.CacheAudios.Value && !BombRushRadio.PreloadCache.Value)
         {
             MusicTrack t = __instance.currentMusicTracks[nextTrackIndex];
 
@@ -103,7 +103,7 @@ public class MusicPlayer_Patches_PlayFrom
         __instance.musicTrackQueue.ClearMusicQueue();
         __instance.musicTrackQueue.AddAllCurrentTracksToQueue();
 
-        if (BombRushRadio.CacheAudios.Value)
+        if (BombRushRadio.CacheAudios.Value && !BombRushRadio.PreloadCache.Value)
         {
             MusicTrack t = __instance.musicTrackQueue.currentMusicTracks[index];
 
