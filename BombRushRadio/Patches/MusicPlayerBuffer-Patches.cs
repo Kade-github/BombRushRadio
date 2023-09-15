@@ -31,7 +31,7 @@ public class MusicPlayerBuffer_Patches
 
         if (t != null)
         {
-            if (BombRushRadio.CacheAudios.Value)
+            if (BombRushRadio.CacheAudios.Value && !BombRushRadio.PreloadCache.Value)
             {
                 t.AudioClip.UnloadAudioData();
                 t.AudioClip = null;
