@@ -79,6 +79,9 @@ namespace BombRushRadio
             string songName = Helpers.FormatMetadata(metadata, "dash");
             string validName = String.Concat(songName.Split(Path.GetInvalidFileNameChars()));
 
+            if (validName.Contains(','))
+                validName = String.Concat(validName.Split(','));
+
             string cacheFile = Path.Combine(cachePath, validName + ".cache");
             string tagFile = Path.Combine(cachePath, validName + ".tag");
 
