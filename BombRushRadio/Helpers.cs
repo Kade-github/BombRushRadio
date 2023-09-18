@@ -1,4 +1,6 @@
-﻿using System;
+﻿using Reptile;
+using System;
+using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using UnityEngine;
@@ -7,6 +9,19 @@ namespace BombRushRadio;
 
 public class Helpers
 {
+    public static void Shuffle(List<MusicTrack> list)
+    {
+        int num = list.Count;
+        while (num > 1)
+        {
+            num--;
+            int index = UnityEngine.Random.Range(0, num + 1);
+            MusicTrack value = list[index];
+            list[index] = list[num];
+            list[num] = value;
+        }
+    }
+
     public static byte[] ConvertFloatToByte(float[] f)
     {
         var byteArray = new byte[f.Length * 4];

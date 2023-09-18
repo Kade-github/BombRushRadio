@@ -42,6 +42,12 @@ You can also use folders, like this:
 
 [Audio]
 
+## Shuffles the music that gets added by Bomb Rush Radio.
+## Also makes song reloading act like a makeshift shuffle button. (excluding game songs)
+# Setting type: Boolean
+# Default value: false
+Shuffle = false
+
 ## Caches audio to disk.
 ## Pros: Memory is lowered significantly, any boot time after the first start is lowered significantly.
 ## Cons: Stutters on play (depending on audio size), caching on disk can be expensive on storage. (depending on audio size/format)

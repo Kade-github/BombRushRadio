@@ -19,6 +19,7 @@ namespace BombRushRadio
 
     public class BombRushRadio : BaseUnityPlugin
     {
+        public static ConfigEntry<bool> ShuffleAudio = null!;
         public static ConfigEntry<bool> CacheAudios = null!;
         public static ConfigEntry<bool> PreloadCache = null!;
         public static MusicPlayer mInstance;
@@ -274,7 +275,9 @@ namespace BombRushRadio
             Logger.LogInfo("[BRR] Bomb Rush Radio has been loaded!");
             loading = false;
 
-            if (!CacheAudios.Value || (CacheAudios.Value && PreloadCache.Value))
+            if (ShuffleAudio.Value)
+                Helpers.Shuffle(audios);
+            else if (!CacheAudios.Value || (CacheAudios.Value && PreloadCache.Value))
                 audios.Sort((t, t2) => String.Compare(t.AudioClip.name, t2.AudioClip.name, StringComparison.Ordinal));
 
             SanitizeSongs();
@@ -287,6 +290,9 @@ namespace BombRushRadio
                 Directory.CreateDirectory(songFolder);
 
             // bind to config
+            ShuffleAudio = Config.Bind("Audio", "Shuffle", false,
+                "Shuffles the music that gets added by Bomb Rush Radio.\nAlso makes song reloading act like a makeshift shuffle button. (excluding game songs)");
+
             CacheAudios = Config.Bind("Audio", "Caching", false,
                 "Caches audio to disk.\nPros: Memory is lowered significantly, any boot time after the first start is lowered significantly.\nCons: Stutters on play (depending on audio size), caching on disk can be expensive on storage. (depending on audio size/format)");
 
