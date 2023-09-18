@@ -44,19 +44,23 @@ namespace BombRushRadio
             {
                 List<MusicTrack> toRemove = new List<MusicTrack>();
 
+                int idx = 0;
+
                 foreach (MusicTrack tr in audios)
                 {
+                    if (mInstance.musicTrackQueue.currentMusicTracks.Contains(tr))
+                        mInstance.musicTrackQueue.currentMusicTracks.Remove(tr);
+                    else
+                        Logger.LogInfo("[BRR] Adding " + tr.Title);
+
                     if (loaded.FirstOrDefault(l => l == Helpers.FormatMetadata(new string[] { tr.Artist, tr.Title }, "dash")) == null)
                     {
-                        Logger.LogInfo("[BRR] Removed " + tr.Title);
-                        mInstance.musicTrackQueue.currentMusicTracks.Remove(tr);
+                        Logger.LogInfo("[BRR] Removing " + tr.Title);
                         toRemove.Add(tr);
                     }
-                    else if (!mInstance.musicTrackQueue.currentMusicTracks.Contains(tr))
-                    {
-                        Logger.LogInfo("[BRR] Added " + tr.Title);
-                        Core.Instance.audioManager.musicPlayer.AddMusicTrack(tr);
-                    }
+
+                    mInstance.musicTrackQueue.currentMusicTracks.Insert(1 + idx, tr);
+                    idx++;
                 }
 
                 foreach (MusicTrack tr in toRemove)
@@ -67,8 +71,6 @@ namespace BombRushRadio
                     if (!CacheAudios.Value || (CacheAudios.Value && PreloadCache.Value))
                         tr.AudioClip.UnloadAudioData();
                 }
-
-                mInstance.musicTrackQueue.currentMusicTracks.Sort((m,m2) => String.Compare(m.Title, m2.Title, StringComparison.Ordinal));
             }
         }
 
@@ -94,6 +96,9 @@ namespace BombRushRadio
                     t.Artist = metadata[0];
                     t.Title = metadata[1];
                     t.isRepeatable = false;
+
+                    if (t.AudioClip != null)
+                        t.AudioClip.name = filePath;
 
                     audios.Add(t);
                     done++;
@@ -124,7 +129,7 @@ namespace BombRushRadio
                     t.Title = metadata[1];
                     t.isRepeatable = false;
                     AudioClip myClip = DownloadHandlerAudioClip.GetContent(www); // this has preloadAudioData on it, which is bad.
-                    myClip.name = songName;
+                    myClip.name = filePath;
 
                     if (CacheAudios.Value)
                     {
@@ -268,6 +273,9 @@ namespace BombRushRadio
 
             Logger.LogInfo("[BRR] Bomb Rush Radio has been loaded!");
             loading = false;
+
+            if (!CacheAudios.Value || (CacheAudios.Value && PreloadCache.Value))
+                audios.Sort((t, t2) => String.Compare(t.AudioClip.name, t2.AudioClip.name, StringComparison.Ordinal));
 
             SanitizeSongs();
         }
