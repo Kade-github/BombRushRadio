@@ -274,6 +274,8 @@ namespace BombRushRadio
 
             yield return StartCoroutine(SearchDirectories());
 
+            Logger.LogInfo("[BRR] TOTAL SONGS LOADED: " + audios.Count);
+            
             Logger.LogInfo("[BRR] Bomb Rush Radio has been loaded!");
             loading = false;
 
@@ -281,6 +283,7 @@ namespace BombRushRadio
                 audios.Sort((t, t2) => String.Compare(t.AudioClip.name, t2.AudioClip.name, StringComparison.Ordinal));
 
             SanitizeSongs();
+            
         }
 
         private void Awake()
@@ -306,6 +309,7 @@ namespace BombRushRadio
             var harmony = new Harmony("kade.bombrushradio");
             harmony.PatchAll();
             Logger.LogInfo("[BRR] Patched...");
+            
 
             Core.OnUpdate += () =>
             {

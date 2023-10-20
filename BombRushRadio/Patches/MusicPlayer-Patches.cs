@@ -8,6 +8,26 @@ using UnityEngine;
 
 namespace BombRushRadio;
 
+[HarmonyPatch(typeof(AppMusicPlayer), nameof(AppMusicPlayer.OnAppInit))]
+public class AppMusicPlayer_Patches
+{
+    public static AppMusicPlayer instance;
+    static void Prefix(AppMusicPlayer __instance)
+    {
+        instance = __instance;
+    }
+}
+
+[HarmonyPatch(typeof(AppMusicPlayer), nameof(AppMusicPlayer.OnAppDisable))]
+public class AppMusicPlayerDisable_Patches
+{
+    static void Prefix(AppMusicPlayer __instance)
+    {
+        AppMusicPlayer_Patches.instance = null;
+    }
+}
+
+
 [HarmonyPatch(typeof(MusicPlayer), nameof(MusicPlayer.StartMusicPlayer))]
 public class MusicPlayer_Patches
 {
@@ -18,15 +38,37 @@ public class MusicPlayer_Patches
 
         BombRushRadio.mInstance = __instance;
 
-        foreach (MusicTrack track in BombRushRadio.audios)
+        if (AppMusicPlayer_Patches.instance != null)
         {
-            if (__instance.musicTrackQueue.currentMusicTracks.Find(m => m.Title == track.Title && m.Artist == track.Artist) != null)
-                continue;
 
-            __instance.musicTrackQueue.currentMusicTracks.Add(track);
+            foreach (MusicTrack track in BombRushRadio.audios)
+            {
+                if (__instance.musicTrackQueue.currentMusicTracks.Find(m => m.Title == track.Title && m.Artist == track.Artist) != null)
+                    continue;
+
+                __instance.musicTrackQueue.currentMusicTracks.Add(track);
+            }
+        
+            __instance.musicTrackQueue.ClearBuffer();
+            __instance.musicTrackQueue.ClearMusicQueue();
+            
+            __instance.musicTrackQueue.BufferTracksInQueue();
+            
+            __instance.musicTrackQueue.AddAllCurrentTracksToQueue();
+            
+            AppMusicPlayer_Patches.instance.GameMusicPlayer = __instance;
+        
+            Debug.Log("Refreshed songs on app, total: " + __instance.musicTrackQueue.AmountOfTracks);
+            AppMusicPlayer_Patches.instance.RefreshList();
+            
+            Debug.Log(AppMusicPlayer_Patches.instance.m_TrackList.musicAlfabeticList.Count + " - length");
+            
+            // basically, theres a MTrackList class that overrides some methods of the regular PhoneScroll class;
+            // this calls the RefreshList method, which in turns updates everything with an alphabetical list of song indexes in the __instance.musicTrackQueue.currentMusicTracks list
+            // and since they call the UpdateList method, and the MTrackList class overrides that, it'll basically call "SetContent(this.m_MusicApp.GetMusicTrack(this.musicAlfabeticList[contentIndex]));"
+            
+            
         }
-
-        __instance.musicTrackQueue.BufferTracksInQueue();
 
         return true;
     }
@@ -94,7 +136,6 @@ public class MusicPlayer_Patches_PlayFrom
 {
     static bool Prefix(MusicPlayer __instance, int index, int playbackSamples = 0)
     {
-        __instance.ForcePaused();
         __instance.isPlayingFromPlaylist = false;
         __instance.wasPlayingLastFrame = false;
         __instance.playbackSamples = playbackSamples;
