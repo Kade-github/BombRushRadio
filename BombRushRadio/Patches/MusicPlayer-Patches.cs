@@ -16,6 +16,9 @@ public class AppMusicPlayer_Patches
     static void Postfix(AppMusicPlayer __instance)
     {
         instance = __instance;
+        
+        if (MusicPlayer_Patches_RefreshMusicQueueForStage.CurrentChapter != null)
+            MusicPlayer_Patches_RefreshMusicQueueForStage.Refresh((MusicPlayer)__instance.GameMusicPlayer, MusicPlayer_Patches_RefreshMusicQueueForStage.CurrentChapter, MusicPlayer_Patches_RefreshMusicQueueForStage.CurrentStage);
 
     }
 }
@@ -29,6 +32,15 @@ public class AppMusicPlayerDisable_Patches
     }
 }
 
+[HarmonyPatch(typeof(AppHomeScreen), nameof(AppHomeScreen.AwakeAnimation))]
+public class AppMusicPlayerRefresh_Patches
+{
+    static void Prefix(AppHomeScreen __instance)
+    {
+        if (MusicPlayer_Patches_RefreshMusicQueueForStage.CurrentChapter != null)
+            MusicPlayer_Patches_RefreshMusicQueueForStage.Refresh(BombRushRadio.mInstance, MusicPlayer_Patches_RefreshMusicQueueForStage.CurrentChapter, MusicPlayer_Patches_RefreshMusicQueueForStage.CurrentStage);
+    }
+}
 
 [HarmonyPatch(typeof(MusicPlayer), MethodType.Constructor, new Type[] { typeof(AudioSource), typeof(MusicTrackQueue)})]
 public class MusicPlayer_Patches
@@ -39,34 +51,15 @@ public class MusicPlayer_Patches
     }
 }
 
-[HarmonyPatch(typeof(AUser), nameof(AUser.GetUnlockableSaveDataFor))]
-public class AUser_Patches
-{
-    static bool Prefix(AUser __instance, UnlockableSaveData __result, AUnlockable unlockable)
-    {
-        if (unlockable is MusicTrack)
-        {
-            MusicTrack t = (MusicTrack)unlockable;
-            if (BombRushRadio.audios.Contains(t))
-            {
-                UnlockableSaveData data = new UnlockableSaveData("BOMBRUSHRADIO-CUSTOMSONG");
-                data.IsUnlocked = true;
-                data.hasSeen = true;
-                __result = data;
-                return false;
-            }
-        }
-
-        return true;
-    }
-}
-
 [HarmonyPatch(typeof(MusicPlayer), nameof(MusicPlayer.RefreshMusicQueueForStage))]
 public class MusicPlayer_Patches_RefreshMusicQueueForStage
 {
-    static void Prefix(MusicPlayer __instance, ChapterMusic chapterMusic, MusicTrack trackToPlay, Stage stage)
+    public static ChapterMusic CurrentChapter;
+    public static Stage CurrentStage;
+
+    public static void Refresh(MusicPlayer __instance, ChapterMusic chapterMusic, Stage stage)
     {
-        __instance.musicTrackQueue.ClearTracks();
+         __instance.musicTrackQueue.ClearTracks();
 
         Story.ObjectiveInfo currentObjectiveInfo = Story.GetCurrentObjectiveInfo();
         if (stage == Stage.hideout)
@@ -104,62 +97,22 @@ public class MusicPlayer_Patches_RefreshMusicQueueForStage
         
         Debug.Log("[BRR] Finished checking for songs to add...");
         
-        __instance.musicTrackQueue.UpdateMusicQueueForStage(trackToPlay);
-
         if (AppMusicPlayer_Patches.instance != null)
         {
             Debug.Log("[BRR] Refreshing songs on the app...");
 
             AppMusicPlayer_Patches.instance.RefreshList();
-            
-            // basically, theres a MTrackList class that overrides some methods of the regular PhoneScroll class;
-            // this calls the RefreshList method, which in turns updates everything with an alphabetical list of song indexes in the __instance.musicTrackQueue.currentMusicTracks list
-            // and since they call the UpdateList method, and the MTrackList class overrides that, it'll basically call "SetContent(this.m_MusicApp.GetMusicTrack(this.musicAlfabeticList[contentIndex]));"
-            
-            // buuutt we need to make our own buttons because the game wont do it for us :(
-            // (sometimes it does but like its hard to do, and inconsistent)
-
-            foreach (var phoneScrollButton in AppMusicPlayer_Patches.instance.m_TrackList.m_Buttons)
-            {
-                var b = (MusicPlayerTrackButton)phoneScrollButton;
-                Object.Destroy(b);
-            }
-
-            AppMusicPlayer_Patches.instance.m_TrackList.m_Buttons = new PhoneScrollButton[__instance.musicTrackQueue.currentMusicTracks.Count];
-            
-            for(int i = 0; i < __instance.musicTrackQueue.currentMusicTracks.Count; i++)
-            {
-                MusicPlayerTrackButton bn = AppMusicPlayer_Patches.instance.m_TrackList.gameObject
-                    .AddComponent<MusicPlayerTrackButton>();
-                bn.SetMusicApp(AppMusicPlayer_Patches.instance);
-                
-                // TODO: Add all of the other stuff that the game does to the button here, like m_TitleLabel, m_ArtistLabel, etc.
-                // otherwise this CRASHES!!!!!!!! (so dont use it yet :P)
-                
-                AppMusicPlayer_Patches.instance.m_TrackList.m_Buttons[i] = bn;
-                AUnlockable a = __instance.musicTrackQueue.currentMusicTracks[i];
-                if (a == null)
-                    Debug.LogError("[BRR] [Setting Button] " + i + " is null!");
-                bn.SetContent(a);
-                bn.IsHidden = false;
-                i++;
-            }
-
         }
-        
     }
-}
-
-[HarmonyPatch(typeof(PhoneScrollUnlockableButton), nameof(PhoneScrollUnlockableButton.SetIndicatorState))]
-public class PhoneScrollUnlockableButton_Patches
-{
-    static bool Prefix(PhoneScrollUnlockableButton __instance, bool isActive)
+    
+    static void Prefix(MusicPlayer __instance, ChapterMusic chapterMusic, MusicTrack trackToPlay, Stage stage)
     {
-        if (__instance.AssignedContent == null)
-            return false;
-        if (__instance.AssignedContent is MusicTrack)
-            return false;
-        return true;
+        CurrentChapter = chapterMusic;
+        CurrentStage = stage;
+        
+        Refresh(__instance, chapterMusic, stage);
+        
+        __instance.musicTrackQueue.UpdateMusicQueueForStage(trackToPlay);
     }
 }
 
@@ -238,7 +191,6 @@ public class MusicPlayer_Patches_PlayFrom
 {
     static void Prefix(MusicPlayer __instance, int index, int playbackSamples = 0)
     {
-
         MusicTrack t = __instance.musicTrackQueue.currentMusicTracks[index];
         if (BombRushRadio.CacheAudios.Value && !BombRushRadio.PreloadCache.Value)
         {

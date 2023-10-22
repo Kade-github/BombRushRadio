@@ -51,6 +51,12 @@
 	<Reference Include="Assembly-CSharp">
 	  <HintPath>..\Assembly-CSharp.dll</HintPath>
 	</Reference>
+	<Reference Include="Unity.TextMeshPro">
+	  <HintPath>..\..\..\steamInstall\steamapps\common\BombRushCyberfunk\Bomb Rush Cyberfunk_Data\Managed\Unity.TextMeshPro.dll</HintPath>
+	</Reference>
+	<Reference Include="UnityEngine.UI">
+	  <HintPath>..\..\..\steamInstall\steamapps\common\BombRushCyberfunk\Bomb Rush Cyberfunk_Data\Managed\UnityEngine.UI.dll</HintPath>
+	</Reference>
   </ItemGroup>
 
   <ItemGroup>
