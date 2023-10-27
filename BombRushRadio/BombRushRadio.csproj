@@ -60,8 +60,6 @@
   </ItemGroup>
 
   <ItemGroup>
-    <Compile Include="App\AppBombRushRadio.cs" />
-    <Compile Include="App\BombRushRadio-ButtonList.cs" />
     <Compile Include="BombRushRadio.cs" />
     <Compile Include="Helpers.cs" />
     <Compile Include="Patches\BaseModule-Patches.cs" />
