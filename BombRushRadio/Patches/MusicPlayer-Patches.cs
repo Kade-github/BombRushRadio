@@ -191,6 +191,7 @@ public class MusicPlayer_Patches_PlayFrom
 {
     static void Prefix(MusicPlayer __instance, int index, int playbackSamples = 0)
     {
+        __instance.ForcePaused();
         MusicTrack t = __instance.musicTrackQueue.currentMusicTracks[index];
         if (BombRushRadio.CacheAudios.Value && !BombRushRadio.PreloadCache.Value)
         {
