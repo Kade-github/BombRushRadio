@@ -231,7 +231,7 @@ public class BombRushRadio : BaseUnityPlugin
         }
 
         // bind to config
-        StreamAudio = Config.Bind("Settings", "Stream Audio", true, "Whether to stream audio from disk or load at runtime (Streaming is faster but more CPU intensive)")
+        StreamAudio = Config.Bind("Settings", "Stream Audio", true, "Whether to stream audio from disk or load at runtime (Streaming is faster but more CPU intensive)");
 
         // load em
         StartCoroutine(ReloadSongs());
