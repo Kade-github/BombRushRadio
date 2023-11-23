@@ -167,3 +167,12 @@ public class MusicPlayer_Patches_NoMusicFound
         Debug.Log("[BRR] Music not found... skipping to next track.");
     }
 }
+
+[HarmonyPatch(typeof(MusicPlayer), nameof(MusicPlayer.PlayFrom))]
+public class MusicPlayer_Patches_PlayFrom
+{
+    static void Prefix(MusicPlayer __instance)
+    {
+        __instance.ForcePaused();
+    }
+}
