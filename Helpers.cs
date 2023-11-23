@@ -26,7 +26,7 @@ public class Helpers
         float[] samples = ConvertByteToFloat(File.ReadAllBytes(cacheFile));
         string[] c = File.ReadAllText(tagFile).Split(',');
 
-        AudioClip a = AudioClip.Create("cachedAudioAsset", int.Parse(c[0]), int.Parse(c[1]), int.Parse(c[2]), false);
+        var a = AudioClip.Create("cachedAudioAsset", int.Parse(c[0]), int.Parse(c[1]), int.Parse(c[2]), false);
         a.SetData(samples, 0);
         return a;
     }
@@ -34,7 +34,7 @@ public class Helpers
     public static string[] GetMetadata(string filePath, bool oldMethod)
     {
         string songName;
-        string songArtist = String.Empty;
+        string songArtist = string.Empty;
 
         if (!oldMethod)
         {
@@ -46,9 +46,13 @@ public class Helpers
                 for (int i = 0; i < tag.Tag.Performers.Length; i++)
                 {
                     if (i == tag.Tag.Performers.Length - 1)
+                    {
                         songArtist += tag.Tag.Performers[i];
+                    }
                     else
+                    {
                         songArtist += $"{tag.Tag.Performers[i]}, ";
+                    }
                 }
             }
             catch (Exception)
@@ -56,8 +60,10 @@ public class Helpers
                 return GetMetadata(filePath, true);
             }
 
-            if (String.IsNullOrEmpty(songName))
+            if (string.IsNullOrEmpty(songName))
+            {
                 return GetMetadata(filePath, true);
+            }
         }
         else
         {
@@ -74,16 +80,20 @@ public class Helpers
             }
         }
 
-        if (!String.IsNullOrEmpty(songArtist))
+        if (!string.IsNullOrEmpty(songArtist))
+        {
             songArtist = songArtist.Trim();
+        }
 
-        return new string[] { songArtist, songName.Trim() };
+        return [songArtist, songName.Trim()];
     }
 
     public static string FormatMetadata(string[] metadata, string type)
     {
-        if (String.IsNullOrEmpty(metadata[0]))
+        if (string.IsNullOrEmpty(metadata[0]))
+        {
             return metadata[1];
+        }
 
         return type switch
         {

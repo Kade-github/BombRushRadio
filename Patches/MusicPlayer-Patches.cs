@@ -38,7 +38,7 @@ public class AppMusicPlayerRefresh_Patches
     static void Prefix(AppHomeScreen __instance)
     {
         if (MusicPlayer_Patches_RefreshMusicQueueForStage.CurrentChapter != null)
-            MusicPlayer_Patches_RefreshMusicQueueForStage.Refresh(BombRushRadio.mInstance, MusicPlayer_Patches_RefreshMusicQueueForStage.CurrentChapter, MusicPlayer_Patches_RefreshMusicQueueForStage.CurrentStage);
+            MusicPlayer_Patches_RefreshMusicQueueForStage.Refresh(BombRushRadio.MInstance, MusicPlayer_Patches_RefreshMusicQueueForStage.CurrentChapter, MusicPlayer_Patches_RefreshMusicQueueForStage.CurrentStage);
     }
 }
 
@@ -47,7 +47,7 @@ public class MusicPlayer_Patches
 {
     static void Postfix(MusicPlayer __instance, AudioSource audioSource, MusicTrackQueue musicTrackQueue) // constructor
     {
-        BombRushRadio.mInstance = __instance;
+        BombRushRadio.MInstance = __instance;
     }
 }
 
@@ -86,7 +86,7 @@ public class MusicPlayer_Patches_RefreshMusicQueueForStage
             }
         }
                     
-        foreach (MusicTrack track in BombRushRadio.audios)
+        foreach (MusicTrack track in BombRushRadio.Audios)
         {
             if (__instance.musicTrackQueue.currentMusicTracks.Find(m => m.Title == track.Title && m.Artist == track.Artist) != null)
                 continue;
@@ -121,7 +121,7 @@ public class MusicTrackQueue_Patches
 {
     static bool Prefix(MusicTrack musicTrack) // ignore unlocking for custom stuff
     {
-        if (BombRushRadio.audios.Find(m => musicTrack.Artist == m.Artist && musicTrack.Title == m.Title))
+        if (BombRushRadio.Audios.Find(m => musicTrack.Artist == m.Artist && musicTrack.Title == m.Title))
             return false;
 
         return true;
@@ -148,11 +148,11 @@ public class MusicTrackQueue_Patches_EvaluateNextTrack
         if (BombRushRadio.CacheAudios.Value && !BombRushRadio.PreloadCache.Value)
         {
 
-            if (BombRushRadio.audios.Find(m => m.Title == t.Title && m.Artist == t.Artist) && t.AudioClip == null)
+            if (BombRushRadio.Audios.Find(m => m.Title == t.Title && m.Artist == t.Artist) && t.AudioClip == null)
             {
                 string cacheName = Helpers.FormatMetadata(new string[] { t.Artist, t.Title }, "dash");
 
-                string[] sp = BombRushRadio.filePaths[cacheName].Split(',');
+                string[] sp = BombRushRadio.FilePaths[cacheName].Split(',');
                 t.AudioClip = Helpers.LoadACFromCache(sp[0], sp[1]);
                 Debug.Log("[BRR] Loaded cache for " + t.Title + ". Length: " + t.AudioClip.length);
             }
@@ -196,11 +196,11 @@ public class MusicPlayer_Patches_PlayFrom
         if (BombRushRadio.CacheAudios.Value && !BombRushRadio.PreloadCache.Value)
         {
 
-            if (BombRushRadio.audios.Find(m => m.Title == t.Title && m.Artist == t.Artist) && t.AudioClip == null)
+            if (BombRushRadio.Audios.Find(m => m.Title == t.Title && m.Artist == t.Artist) && t.AudioClip == null)
             {
                 string cacheName = Helpers.FormatMetadata(new string[] { t.Artist, t.Title }, "dash");
 
-                string[] sp = BombRushRadio.filePaths[cacheName].Split(',');
+                string[] sp = BombRushRadio.FilePaths[cacheName].Split(',');
                 t.AudioClip = Helpers.LoadACFromCache(sp[0], sp[1]);
                 Debug.Log("[BRR] Loaded cache for " + t.Title + ". Length: " + t.AudioClip.length);
             }
