@@ -117,10 +117,14 @@ public class BombRushRadio : BaseUnityPlugin
                 musicTrack.isRepeatable = false;
 
                 var downloadHandler = (DownloadHandlerAudioClip) www.downloadHandler;
-                downloadHandler.streamAudio = true;
+                if (StreamAudio.Value)
+                {
+                    downloadHandler.streamAudio = true;
+                }
 
-                AudioClip myClip = downloadHandler.audioClip; // this has preloadAudioData on it, which is bad.
+                AudioClip myClip = downloadHandler.audioClip;
                 myClip.name = filePath;
+
                 musicTrack.AudioClip = myClip;
 
                 Audios.Add(musicTrack);
@@ -216,7 +220,7 @@ public class BombRushRadio : BaseUnityPlugin
         Logger.LogInfo("[BRR] Bomb Rush Radio has been loaded!");
         Loading = false;
 
-        Audios.Sort((t, t2) => String.Compare(t.AudioClip.name, t2.AudioClip.name, StringComparison.Ordinal));
+        Audios.Sort((t, t2) => string.Compare(t.AudioClip.name, t2.AudioClip.name, StringComparison.Ordinal));
 
         SanitizeSongs();
 
