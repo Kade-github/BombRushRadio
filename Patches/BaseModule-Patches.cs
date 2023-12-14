@@ -8,7 +8,7 @@ public class UnloadMainMenuScenePatch
 {
     static void Prefix()
     {
-        BombRushRadio.inMainMenu = false;
+        BombRushRadio.InMainMenu = false;
     }
 }
 
@@ -17,6 +17,6 @@ public class LoadMainMenuScenePatch
 {
     static void Prefix()
     {
-        BombRushRadio.inMainMenu = true;
+        BombRushRadio.InMainMenu = true;
     }
 }
