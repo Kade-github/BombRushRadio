@@ -16,6 +16,7 @@ namespace BombRushRadio;
 public class BombRushRadio : BaseUnityPlugin
 {
     public static ConfigEntry<bool> StreamAudio;
+    public static ConfigEntry<KeyCode> ReloadKey;
 
     public static MusicPlayer MInstance;
     public static List<MusicTrack> Audios = new();
@@ -236,6 +237,7 @@ public class BombRushRadio : BaseUnityPlugin
 
         // bind to config
         StreamAudio = Config.Bind("Settings", "Stream Audio", true, "Whether to stream audio from disk or load at runtime (Streaming is faster but more CPU intensive)");
+        ReloadKey = Config.Bind("Settings", "Reload Key", KeyCode.F1, "Keybind used for reloading songs.");
 
         // load em
         StartCoroutine(ReloadSongs());
@@ -246,7 +248,7 @@ public class BombRushRadio : BaseUnityPlugin
 
         Core.OnUpdate += () =>
         {
-            if (Input.GetKeyDown(KeyCode.F1) && !InMainMenu) // reload songs
+            if (Input.GetKeyDown(ReloadKey.Value) && !InMainMenu) // reload songs
             {
                 StartCoroutine(ReloadSongs());
             }
