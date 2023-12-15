@@ -20,7 +20,6 @@ public class BombRushRadio : BaseUnityPlugin
 
     public static MusicPlayer MInstance;
     public static List<MusicTrack> Audios = new();
-    public static Dictionary<string, string> FilePaths = new();
     public int ShouldBeDone;
     public int Done;
 
@@ -68,9 +67,7 @@ public class BombRushRadio : BaseUnityPlugin
 
             foreach (MusicTrack tr in toRemove)
             {
-                FilePaths.Remove(Helpers.FormatMetadata([tr.Artist, tr.Title], "dash"));
                 Audios.Remove(tr);
-
                 tr.AudioClip.UnloadAudioData();
             }
         }
@@ -81,20 +78,6 @@ public class BombRushRadio : BaseUnityPlugin
         string[] metadata = Helpers.GetMetadata(filePath, false);
 
         string songName = Helpers.FormatMetadata(metadata, "dash");
-        string validName = string.Concat(songName.Split(Path.GetInvalidFileNameChars()));
-
-        if (validName.Contains(','))
-        {
-            validName = string.Concat(validName.Split(','));
-        }
-
-        string cacheFile = Path.Combine(_cachePath, validName + ".cache");
-        string tagFile = Path.Combine(_cachePath, validName + ".tag");
-
-        if (!FilePaths.ContainsKey(songName))
-        {
-            FilePaths.Add(songName, cacheFile + "," + tagFile);
-        }
 
         // Escape special characters so we don't get an HTML error when we send the request
         filePath = UnityWebRequest.EscapeURL(filePath);
@@ -233,6 +216,12 @@ public class BombRushRadio : BaseUnityPlugin
         if (!Directory.Exists(_songFolder))
         {
             Directory.CreateDirectory(_songFolder);
+        }
+
+        // purge cache files
+        if (Directory.Exists(_cachePath))
+        {
+            Directory.Delete(_cachePath, true);
         }
 
         // bind to config
