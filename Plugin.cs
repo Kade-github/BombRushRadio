@@ -204,10 +204,9 @@ public class BombRushRadio : BaseUnityPlugin
         Logger.LogInfo("[BRR] Bomb Rush Radio has been loaded!");
         Loading = false;
 
-        Audios.Sort((t, t2) => string.Compare(t.AudioClip.name, t2.AudioClip.name, StringComparison.Ordinal));
+        Audios.Sort((t, t2) => string.Compare(t.AudioClip.name, t2.AudioClip.name, StringComparison.OrdinalIgnoreCase));
 
         SanitizeSongs();
-
     }
 
     private void Awake()
