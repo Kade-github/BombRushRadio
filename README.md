@@ -102,7 +102,7 @@ Want to reload songs on the fly? Make some changes in the song folder and press 
 
 ## Building
 
-Please follow this step in the Slopcrew Building file (as we use the exact same method to find the Assembly-CSharp.dll) [here](E:\steamInstall\steamapps\common\BombRushCyberfunk)
+Please follow this step in the Slopcrew Building file (as we use the exact same method to find the Assembly-CSharp.dll) [here](https://github.com/SlopCrew/SlopCrew/blob/main/docs/Developer%20Guide.md#building-slop-crew)
 
 And then open the .csproj.
 
