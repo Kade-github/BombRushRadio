@@ -102,11 +102,9 @@ Want to reload songs on the fly? Make some changes in the song folder and press 
 
 ## Building
 
-Create a Publicized Assembly of the game, through anything (I used BepInEx's one, oh and I can't provide this because its a paid game)
+Please follow this step in the Slopcrew Building file (as we use the exact same method to find the Assembly-CSharp.dll) [here](E:\steamInstall\steamapps\common\BombRushCyberfunk)
 
-(put that file in the root directory, called "Assembly-CSharp.dll")
-
-And then open the .sln.
+And then open the .csproj.
 
 Make sure to add "https://nuget.bepinex.dev/v3/index.json" as a NuGet source. (in rider heres how it looks)
 
