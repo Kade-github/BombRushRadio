@@ -55,7 +55,7 @@ public class BombRushRadio : BaseUnityPlugin
                     Logger.LogInfo("[BRR] Adding " + tr.Title);
                 }
 
-                if (Loaded.FirstOrDefault(l => l == Helpers.FormatMetadata([tr.Artist, tr.Title], "dash")) == null)
+                if (Loaded.FirstOrDefault(l => l == Helpers.FormatMetadata(new []{tr.Artist, tr.Title}, "dash")) == null)
                 {
                     Logger.LogInfo("[BRR] Removing " + tr.Title);
                     toRemove.Add(tr);

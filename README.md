@@ -43,7 +43,7 @@ You can also use folders, like this:
 # Config
 
 ```
-## Settings file was created by plugin Bomb Rush Radio! v1.4
+## Settings file was created by plugin Bomb Rush Radio! v1.7
 ## Plugin GUID: kade.bombrushradio
 
 [Audio]

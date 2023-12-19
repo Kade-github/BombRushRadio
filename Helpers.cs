@@ -60,7 +60,7 @@ public class Helpers
             songArtist = songArtist.Trim();
         }
 
-        return [songArtist, songName.Trim()];
+        return new[]{songArtist, songName.Trim()};
     }
 
     public static string FormatMetadata(string[] metadata, string type)
