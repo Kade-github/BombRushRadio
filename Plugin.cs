@@ -28,6 +28,7 @@ public class BombRushRadio : BaseUnityPlugin
     public static bool InMainMenu = false;
     public static bool Loading;
 
+    private readonly AudioType[] _trackerTypes = new[] { AudioType.IT, AudioType.MOD, AudioType.S3M, AudioType.XM };
     private readonly string _songFolder = Path.Combine(Application.streamingAssetsPath, "Mods", "BombRushRadio", "Songs");
     private readonly string _cachePath = Path.Combine(Paths.CachePath, "BombRushRadio");
 
@@ -55,7 +56,7 @@ public class BombRushRadio : BaseUnityPlugin
                     Logger.LogInfo("[BRR] Adding " + tr.Title);
                 }
 
-                if (Loaded.FirstOrDefault(l => l == Helpers.FormatMetadata(new []{tr.Artist, tr.Title}, "dash")) == null)
+                if (Loaded.FirstOrDefault(l => l == Helpers.FormatMetadata(new[] { tr.Artist, tr.Title }, "dash")) == null)
                 {
                     Logger.LogInfo("[BRR] Removing " + tr.Title);
                     toRemove.Add(tr);
@@ -101,10 +102,7 @@ public class BombRushRadio : BaseUnityPlugin
                 musicTrack.isRepeatable = false;
 
                 var downloadHandler = (DownloadHandlerAudioClip) www.downloadHandler;
-                if (StreamAudio.Value)
-                {
-                    downloadHandler.streamAudio = true;
-                }
+                downloadHandler.streamAudio = StreamAudio.Value && !_trackerTypes.Contains(type);
 
                 AudioClip myClip = downloadHandler.audioClip;
                 myClip.name = filePath;

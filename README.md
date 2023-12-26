@@ -43,24 +43,20 @@ You can also use folders, like this:
 # Config
 
 ```
-## Settings file was created by plugin Bomb Rush Radio! v1.7
-## Plugin GUID: kade.bombrushradio
+## Settings file was created by plugin BombRushRadio v1.7
+## Plugin GUID: BombRushRadio
 
-[Audio]
+[Settings]
 
-## Caches audio to disk.
-## Pros: Memory is lowered significantly, any boot time after the first start is lowered significantly.
-## Cons: Stutters on play (depending on audio size), caching on disk can be expensive on storage. (depending on audio size/format)
+## Whether to stream audio from disk or load at runtime (Streaming is faster but more CPU intensive)
 # Setting type: Boolean
-# Default value: false
-Caching = false
+# Default value: true
+Stream Audio = true
 
-## Preloads cached audio from disk.
-## Causes slightly longer boot with memory usage increasing like without cache, but prevents stuttering when a song plays.
-## Requires Caching to be enabled.
-# Setting type: Boolean
-# Default value: false
-PreloadCache = false
+## Keybind used for reloading songs.
+# Setting type: KeyCode
+# Default value: F1
+Reload Key = F1
 
 ```
 
