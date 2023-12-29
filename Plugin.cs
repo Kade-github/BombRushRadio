@@ -15,7 +15,6 @@ namespace BombRushRadio;
 [BepInPlugin(PluginInfo.PLUGIN_GUID, PluginInfo.PLUGIN_NAME, PluginInfo.PLUGIN_VERSION)]
 public class BombRushRadio : BaseUnityPlugin
 {
-    public static ConfigEntry<bool> StreamAudio;
     public static ConfigEntry<KeyCode> ReloadKey;
 
     public static MusicPlayer MInstance;
@@ -102,7 +101,7 @@ public class BombRushRadio : BaseUnityPlugin
                 musicTrack.isRepeatable = false;
 
                 var downloadHandler = (DownloadHandlerAudioClip) www.downloadHandler;
-                downloadHandler.streamAudio = StreamAudio.Value && !_trackerTypes.Contains(type);
+                downloadHandler.streamAudio = !_trackerTypes.Contains(type);
 
                 AudioClip myClip = downloadHandler.audioClip;
                 myClip.name = filePath;
@@ -222,7 +221,6 @@ public class BombRushRadio : BaseUnityPlugin
         }
 
         // bind to config
-        StreamAudio = Config.Bind("Settings", "Stream Audio", true, "Whether to stream audio from disk or load at runtime (Streaming is faster but more CPU intensive)");
         ReloadKey = Config.Bind("Settings", "Reload Key", KeyCode.F1, "Keybind used for reloading songs.");
 
         // load em
