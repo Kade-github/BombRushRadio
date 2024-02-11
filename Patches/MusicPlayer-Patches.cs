@@ -107,7 +107,7 @@ public class MusicPlayer_Patches_RefreshMusicQueueForStage
         }
     }
 
-    static void Prefix(MusicPlayer __instance, ChapterMusic chapterMusic, MusicTrack trackToPlay, Stage stage)
+    static bool Prefix(MusicPlayer __instance, ChapterMusic chapterMusic, MusicTrack trackToPlay, Stage stage)
     {
         CurrentChapter = chapterMusic;
         CurrentStage = stage;
@@ -115,6 +115,7 @@ public class MusicPlayer_Patches_RefreshMusicQueueForStage
         Refresh(__instance, chapterMusic, stage);
 
         __instance.musicTrackQueue.UpdateMusicQueueForStage(trackToPlay);
+        return false;
     }
 }
 
