@@ -29,7 +29,6 @@ public class BombRushRadio : BaseUnityPlugin
 
     private readonly AudioType[] _trackerTypes = new[] { AudioType.IT, AudioType.MOD, AudioType.S3M, AudioType.XM };
     private readonly string _songFolder = Path.Combine(Application.streamingAssetsPath, "Mods", "BombRushRadio", "Songs");
-    private readonly string _cachePath = Path.Combine(Paths.CachePath, "BombRushRadio");
 
     public void SanitizeSongs()
     {
@@ -119,13 +118,6 @@ public class BombRushRadio : BaseUnityPlugin
     public IEnumerator LoadFile(string f)
     {
         string extension = Path.GetExtension(f).ToLowerInvariant().Substring(1);
-
-        if (extension is "cache" or "tag")
-        {
-            File.Delete(f); // Remove old cache files
-            yield return null;
-        }
-
         string[] metadata = Helpers.GetMetadata(f, false);
 
         if (Audios.Find(m => m.Artist == metadata[0] && m.Title == metadata[1]))
@@ -212,12 +204,6 @@ public class BombRushRadio : BaseUnityPlugin
         if (!Directory.Exists(_songFolder))
         {
             Directory.CreateDirectory(_songFolder);
-        }
-
-        // purge cache files
-        if (Directory.Exists(_cachePath))
-        {
-            Directory.Delete(_cachePath, true);
         }
 
         // bind to config
