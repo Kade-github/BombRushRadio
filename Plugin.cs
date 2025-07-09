@@ -100,8 +100,7 @@ public class BombRushRadio : BaseUnityPlugin
                 musicTrack.isRepeatable = false;
 
                 var downloadHandler = (DownloadHandlerAudioClip) www.downloadHandler;
-                downloadHandler.streamAudio = StreamAudio.Value && !_trackerTypes.Contains(type);
-
+                downloadHandler.streamAudio = !_trackerTypes.Contains(type);
 
                 AudioClip myClip = downloadHandler.audioClip;
                 myClip.name = filePath;
