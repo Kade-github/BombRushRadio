@@ -15,7 +15,6 @@ namespace BombRushRadio;
 [BepInPlugin(PluginInfo.PLUGIN_GUID, PluginInfo.PLUGIN_NAME, PluginInfo.PLUGIN_VERSION)]
 public class BombRushRadio : BaseUnityPlugin
 {
-    public static ConfigEntry<bool> StreamAudio;
     public static ConfigEntry<KeyCode> ReloadKey;
 
     public static MusicPlayer MInstance;
@@ -30,7 +29,6 @@ public class BombRushRadio : BaseUnityPlugin
 
     private readonly AudioType[] _trackerTypes = new[] { AudioType.IT, AudioType.MOD, AudioType.S3M, AudioType.XM };
     private readonly string _songFolder = Path.Combine(Application.streamingAssetsPath, "Mods", "BombRushRadio", "Songs");
-    private readonly string _cachePath = Path.Combine(Paths.CachePath, "BombRushRadio");
 
     public void SanitizeSongs()
     {
@@ -104,6 +102,7 @@ public class BombRushRadio : BaseUnityPlugin
                 var downloadHandler = (DownloadHandlerAudioClip) www.downloadHandler;
                 downloadHandler.streamAudio = StreamAudio.Value && !_trackerTypes.Contains(type);
 
+
                 AudioClip myClip = downloadHandler.audioClip;
                 myClip.name = filePath;
 
@@ -120,13 +119,6 @@ public class BombRushRadio : BaseUnityPlugin
     public IEnumerator LoadFile(string f)
     {
         string extension = Path.GetExtension(f).ToLowerInvariant().Substring(1);
-
-        if (extension is "cache" or "tag")
-        {
-            File.Delete(f); // Remove old cache files
-            yield return null;
-        }
-
         string[] metadata = Helpers.GetMetadata(f, false);
 
         if (Audios.Find(m => m.Artist == metadata[0] && m.Title == metadata[1]))
@@ -215,14 +207,7 @@ public class BombRushRadio : BaseUnityPlugin
             Directory.CreateDirectory(_songFolder);
         }
 
-        // purge cache files
-        if (Directory.Exists(_cachePath))
-        {
-            Directory.Delete(_cachePath, true);
-        }
-
         // bind to config
-        StreamAudio = Config.Bind("Settings", "Stream Audio", true, "Whether to stream audio from disk or load at runtime (Streaming is faster but more CPU intensive)");
         ReloadKey = Config.Bind("Settings", "Reload Key", KeyCode.F1, "Keybind used for reloading songs.");
 
         // load em
