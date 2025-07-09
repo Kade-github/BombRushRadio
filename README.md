@@ -38,8 +38,12 @@ The keybind can be configured in the mod's config.
 ```
 ## Settings file was created by plugin BombRushRadio v1.7
 ## Plugin GUID: BombRushRadio
-
 [Settings]
+
+## Whether to stream audio from disk or load at runtime (Streaming is faster but more CPU intensive)
+# Setting type: Boolean
+# Default value: true
+Stream Audio = true
 
 ## Keybind used for reloading songs.
 # Setting type: KeyCode
